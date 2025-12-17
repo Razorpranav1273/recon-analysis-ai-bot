@@ -126,3 +126,98 @@ class ReconStatusAnalyzer:
                 "findings": [],
             }
 
+    def analyze_from_report(
+        self, records: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
+        """
+        Analyze records from a parsed report (CSV/Excel) for missing recon_at.
+        No API calls needed - works directly on the report data.
+
+        Args:
+            records: List of records from parsed report
+
+        Returns:
+            Dict containing findings
+        """
+        try:
+            logger.info(
+                "Starting recon_at analysis from report",
+                record_count=len(records),
+            )
+
+            findings = []
+            reconciled_count = 0
+
+            for record in records:
+                # Check for records that are reconciled but missing recon_at
+                recon_status = (
+                    record.get("recon_status") or 
+                    record.get("Recon Status") or 
+                    record.get("status") or
+                    ""
+                ).lower()
+                
+                recon_at = (
+                    record.get("recon_at") or 
+                    record.get("Recon At") or 
+                    record.get("reconciled_at") or
+                    record.get("recon_timestamp")
+                )
+                
+                entity_id = (
+                    record.get("entity_id") or 
+                    record.get("rzp_entity_id") or
+                    record.get("Entity ID") or
+                    record.get("payment_id") or
+                    record.get("Payment ID")
+                )
+                
+                record_id = (
+                    record.get("record_id") or 
+                    record.get("id") or
+                    record.get("Record ID")
+                )
+
+                if "reconciled" in recon_status:
+                    reconciled_count += 1
+                    
+                    # Check if recon_at is missing
+                    if not recon_at or str(recon_at).strip() == "" or str(recon_at).lower() == "null":
+                        findings.append({
+                            "record_id": record_id,
+                            "entity_id": entity_id,
+                            "recon_status": recon_status,
+                            "recon_at": recon_at,
+                            "issue": "recon_at_not_updated",
+                            "suggestion": "Update txn_entity with recon_at timestamp",
+                            "raw_record": record,
+                        })
+
+            logger.info(
+                "Recon_at analysis from report completed",
+                total_records=len(records),
+                reconciled_count=reconciled_count,
+                findings_count=len(findings),
+            )
+
+            return {
+                "success": True,
+                "findings": findings,
+                "total_records": len(records),
+                "total_reconciled": reconciled_count,
+                "needs_update": len(findings),
+                "scenario": "A",
+                "scenario_name": "recon_at_not_updated",
+            }
+
+        except Exception as e:
+            logger.error(
+                "Failed to analyze recon_at from report",
+                error=str(e),
+            )
+            return {
+                "success": False,
+                "error": f"Exception: {str(e)}",
+                "findings": [],
+            }
+

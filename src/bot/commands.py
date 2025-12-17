@@ -36,7 +36,7 @@ class CommandHandler:
         Handle /recon-analyze command.
 
         Args:
-            command_text: Command text (e.g., "workspace=XXX report_url=...")
+            command_text: Command text (e.g., "report_url=URL" or just a URL)
             user_id: Slack user ID
             channel_id: Slack channel ID
 
@@ -53,59 +53,67 @@ class CommandHandler:
 
             # Parse command
             parsed = self._parse_command(command_text)
-            workspace_name = parsed.get("workspace")
             report_url = parsed.get("report_url")
             report_file = parsed.get("report_file")
-
-            if not workspace_name:
+            
+            # If command_text looks like a URL, use it directly
+            if command_text.strip().startswith("http"):
+                report_url = command_text.strip()
+            
+            # Check if we have a report to analyze
+            if not report_url and not report_file:
                 return self.slack_service.format_simple_message(
-                    "Error: workspace name is required. Usage: /recon-analyze workspace=WORKSPACE_NAME [report_url=URL]"
+                    "📊 *Recon Analysis Bot*\n\n"
+                    "Please provide a report file to analyze.\n\n"
+                    "*Usage:*\n"
+                    "• `/recon-analyze report_url=https://example.com/report.csv`\n"
+                    "• `/recon-analyze https://example.com/report.csv`\n"
+                    "• `@Recon Analysis Bot analyze https://example.com/report.csv`\n\n"
+                    "*Supported formats:* CSV, Excel (.xlsx, .xls)"
                 )
 
-            # Get workspace
-            workspace_result = self.recon_client.get_workspace_by_name(workspace_name)
-            if not workspace_result["success"]:
+            # Parse report
+            logger.info("Parsing report", report_url=report_url, report_file=report_file)
+            report_result = self.report_parser.parse_report(
+                file_path=report_file, url=report_url
+            )
+            
+            if not report_result["success"]:
                 return self.slack_service.format_simple_message(
-                    f"Error: {workspace_result.get('error', 'Failed to find workspace')}"
+                    f"❌ Failed to parse report: {report_result.get('error', 'Unknown error')}"
                 )
-
-            workspace_id = workspace_result.get("workspace_id")
-            if not workspace_id:
+            
+            report_data = report_result.get("records", [])
+            if not report_data:
                 return self.slack_service.format_simple_message(
-                    f"Error: Workspace '{workspace_name}' found but no ID available"
+                    "⚠️ Report parsed but no records found. Please check the file format."
                 )
+            
+            logger.info("Report parsed successfully", record_count=len(report_data))
 
-            # Parse report if provided
-            report_data = None
-            if report_url or report_file:
-                report_result = self.report_parser.parse_report(
-                    file_path=report_file, url=report_url
-                )
-                if report_result["success"]:
-                    report_data = report_result.get("records", [])
+            # Run analyses directly on report data (no API calls needed)
+            logger.info("Running analyses on report data", record_count=len(report_data))
 
-            # Run analyses
-            logger.info("Running analyses", workspace_id=workspace_id)
-
-            # Scenario A: recon_at not updated
-            scenario_a = self.recon_status_analyzer.analyze_recon_at_missing(
-                workspace_id=workspace_id
+            # Scenario A: recon_at not updated (analyze from report data)
+            scenario_a = self.recon_status_analyzer.analyze_from_report(
+                records=report_data
             )
 
-            # Scenario B: Missing internal data
-            scenario_b = self.gap_analyzer.analyze_missing_internal_data(
-                workspace_id=workspace_id
+            # Scenario B: Missing internal data (analyze from report data)
+            scenario_b = self.gap_analyzer.analyze_from_report(
+                records=report_data
             )
 
-            # Scenario C: Rule matching failures
-            scenario_c = self.rule_analyzer.analyze_rule_failures(
-                workspace_id=workspace_id, unreconciled_records=None
+            # Scenario C: Rule matching failures (analyze from report data)
+            scenario_c = self.rule_analyzer.analyze_from_report(
+                records=report_data
             )
 
             # Format results
+            report_source = report_url or report_file or "Unknown"
             analysis_results = {
-                "workspace_name": workspace_name,
-                "workspace_id": workspace_id,
+                "report_source": report_source,
+                "total_records": len(report_data),
                 "scenario_a": scenario_a,
                 "scenario_b": scenario_b,
                 "scenario_c": scenario_c,
@@ -219,8 +227,9 @@ class CommandHandler:
             Dict containing Slack response
         """
         try:
-            # Remove bot mention and clean up text
-            cleaned_text = message_text.strip().lower()
+            # Keep original text for URL extraction
+            original_text = message_text.strip()
+            cleaned_text = original_text.lower()
             
             logger.info(
                 "Handling app mention",
@@ -229,68 +238,113 @@ class CommandHandler:
                 channel_id=channel_id,
             )
             
+            # First, check if there's a URL or file path in the message
+            url = self._extract_url_from_text(original_text)
+            file_path = self._extract_file_path_from_text(original_text)
+            
+            if url:
+                logger.info("Found URL in mention, analyzing report", url=url)
+                return self.handle_recon_analyze(
+                    command_text=f"report_url={url}",
+                    user_id=user_id,
+                    channel_id=channel_id,
+                )
+            
+            if file_path:
+                logger.info("Found file path in mention, analyzing report", file_path=file_path)
+                return self.handle_recon_analyze(
+                    command_text=f"report_file={file_path}",
+                    user_id=user_id,
+                    channel_id=channel_id,
+                )
+            
             # Intent detection using keywords
             if any(keyword in cleaned_text for keyword in [
-                "list", "show", "what", "available", "all", "workspaces", "workspace"
-            ]) and any(keyword in cleaned_text for keyword in ["workspace", "workspaces"]):
-                # List workspaces intent
-                return self.handle_list_workspaces()
-            
-            elif any(keyword in cleaned_text for keyword in [
                 "analyze", "analysis", "check", "run", "recon"
             ]):
-                # Analyze intent - try to extract workspace name
-                workspace_name = self._extract_workspace_from_text(cleaned_text)
-                
-                if workspace_name:
-                    # Use existing analyze handler
-                    return self.handle_recon_analyze(
-                        command_text=f"workspace={workspace_name}",
-                        user_id=user_id,
-                        channel_id=channel_id,
-                    )
-                else:
-                    return self.slack_service.format_simple_message(
-                        "I can help you analyze a workspace! Please specify which workspace to analyze.\n\n"
-                        "Examples:\n"
-                        "• `analyze workspace XYZ`\n"
-                        "• `check recon for workspace ABC`\n"
-                        "• `run analysis on workspace TEST`\n\n"
-                        "Or use `/recon-list-workspaces` to see all available workspaces."
-                    )
+                # Analyze intent - need a report URL
+                return self.slack_service.format_simple_message(
+                    "📊 *I can analyze your recon reports!*\n\n"
+                    "Please provide a report file URL:\n\n"
+                    "*Examples:*\n"
+                    "• `@Recon Analysis Bot analyze https://example.com/report.csv`\n"
+                    "• `/recon-analyze https://example.com/report.xlsx`\n"
+                    "• Just paste the URL: `@Recon Analysis Bot https://...`\n\n"
+                    "*Supported formats:* CSV, Excel (.xlsx, .xls)\n\n"
+                    "I'll analyze the report for:\n"
+                    "• 🔴 Missing recon_at updates\n"
+                    "• 🟡 Missing internal data\n"
+                    "• 🟠 Rule matching failures"
+                )
             
             elif any(keyword in cleaned_text for keyword in [
                 "hello", "hi", "hey", "help", "what can you do"
             ]):
                 # Greeting/help intent
                 return self.slack_service.format_simple_message(
-                    "👋 Hi! I'm the Recon Analysis Bot. I can help you:\n\n"
-                    "📋 *List Workspaces:*\n"
-                    "   • `@Recon Analysis Bot list workspaces`\n"
-                    "   • `@Recon Analysis Bot show all workspaces`\n"
-                    "   • `/recon-list-workspaces`\n\n"
-                    "🔍 *Analyze Workspace:*\n"
-                    "   • `@Recon Analysis Bot analyze workspace XYZ`\n"
-                    "   • `@Recon Analysis Bot check recon for workspace ABC`\n"
-                    "   • `/recon-analyze workspace=XYZ`\n\n"
-                    "💡 Just mention me and ask naturally, or use slash commands!"
+                    "👋 *Hi! I'm the Recon Analysis Bot.*\n\n"
+                    "I analyze recon reports (CSV/Excel) and find issues like:\n"
+                    "• Missing recon_at updates (Scenario A)\n"
+                    "• Missing internal data (Scenario B)\n"
+                    "• Rule matching failures (Scenario C)\n\n"
+                    "*How to use:*\n"
+                    "1️⃣ Share a report URL with me:\n"
+                    "   `@Recon Analysis Bot https://example.com/report.csv`\n\n"
+                    "2️⃣ Or use slash command:\n"
+                    "   `/recon-analyze https://example.com/report.csv`\n\n"
+                    "💡 Just paste a report URL and I'll analyze it!"
                 )
             
             else:
                 # Unknown intent - provide helpful response
                 return self.slack_service.format_simple_message(
-                    "I can help you with reconciliation analysis! Here's what I can do:\n\n"
-                    "• *List workspaces:* `@Recon Analysis Bot list workspaces`\n"
-                    "• *Analyze workspace:* `@Recon Analysis Bot analyze workspace NAME`\n"
-                    "• *Get help:* `@Recon Analysis Bot help`\n\n"
-                    "Or use slash commands:\n"
-                    "• `/recon-list-workspaces` - List all workspaces\n"
-                    "• `/recon-analyze workspace=NAME` - Analyze a workspace"
+                    "📊 *Recon Analysis Bot*\n\n"
+                    "I can analyze your recon reports! Just share a report URL:\n\n"
+                    "`@Recon Analysis Bot https://example.com/report.csv`\n\n"
+                    "Or use: `/recon-analyze https://example.com/report.xlsx`\n\n"
+                    "*Supported formats:* CSV, Excel (.xlsx, .xls)"
                 )
                 
         except Exception as e:
             logger.error("Error handling mention", error=str(e))
             return self.slack_service.format_simple_message(f"Error: {str(e)}")
+
+    def _extract_url_from_text(self, text: str) -> Optional[str]:
+        """
+        Extract URL from text.
+        
+        Args:
+            text: Text to search for URL
+            
+        Returns:
+            URL if found, None otherwise
+        """
+        # Pattern to match URLs
+        url_pattern = r'https?://[^\s<>"\'\)>]+'
+        match = re.search(url_pattern, text)
+        if match:
+            url = match.group(0)
+            # Clean up any trailing punctuation
+            url = url.rstrip('.,;:!?')
+            return url
+        return None
+
+    def _extract_file_path_from_text(self, text: str) -> Optional[str]:
+        """
+        Extract file path from text.
+        
+        Args:
+            text: Text to search for file path
+            
+        Returns:
+            File path if found, None otherwise
+        """
+        # Pattern to match file paths (Unix-style)
+        path_pattern = r'(/[^\s<>"\']+\.(csv|xlsx|xls))'
+        match = re.search(path_pattern, text, re.IGNORECASE)
+        if match:
+            return match.group(1)
+        return None
 
     def _extract_workspace_from_text(self, text: str) -> Optional[str]:
         """

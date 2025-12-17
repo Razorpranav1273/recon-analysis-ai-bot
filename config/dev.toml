@@ -1,5 +1,11 @@
 [recon]
 base_url = "http://localhost:5000"
+# Option 1: Use Basic Auth token directly (easiest)
+basic_auth_token = "${RECON_BASIC_AUTH_TOKEN}"
+# Option 2: Use Basic Auth (username:password)
+api_username = "${RECON_API_USERNAME}"
+api_password = "${RECON_API_PASSWORD}"
+# Option 3: Use Bearer token (fallback)
 api_key = "${RECON_API_KEY}"
 
 [trino]

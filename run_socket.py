@@ -95,12 +95,38 @@ def create_socket_mode_app():
                 "text": f"Error: {str(e)}",
             })
     
+    # Track processed messages to avoid duplicates from retries
+    processed_messages = set()
+    
     # Register app mention handler
     @app.event("app_mention")
-    def handle_app_mentions(event, say):
+    def handle_app_mentions(event, say, payload):
         """Handle app mention events with natural language processing."""
         try:
-            # Acknowledge immediately
+            # Skip retried messages
+            retry_attempt = payload.get("retry_attempt", 0) if payload else 0
+            if retry_attempt > 0:
+                logger.debug(
+                    "Skipping retried message",
+                    retry_attempt=retry_attempt,
+                    retry_reason=payload.get("retry_reason", ""),
+                )
+                return  # Don't process retries
+            
+            # Skip already processed messages (deduplication)
+            message_ts = event.get("ts", "")
+            if message_ts in processed_messages:
+                logger.debug("Skipping already processed message", ts=message_ts)
+                return
+            
+            # Mark as processed (keep only last 100 messages)
+            processed_messages.add(message_ts)
+            if len(processed_messages) > 100:
+                # Remove oldest entries
+                oldest = sorted(processed_messages)[:50]
+                for ts in oldest:
+                    processed_messages.discard(ts)
+            
             text = event.get("text", "")
             user = event.get("user", "")
             channel_id = event.get("channel", "")

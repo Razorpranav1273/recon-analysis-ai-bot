@@ -188,10 +188,7 @@ class RuleAnalyzer:
         self, record: Dict[str, Any], workspace_id: str
     ) -> bool:
         """
-        Check if record has both internal and MIS data.
-
-        This is a simplified check. Actual implementation would
-        check for record pairs or related records.
+        Check if record has both internal and MIS data by querying recon results.
 
         Args:
             record: Record to check
@@ -200,19 +197,77 @@ class RuleAnalyzer:
         Returns:
             True if record has both internal and MIS data
         """
-        # Simplified: check if record has both source types
-        source_id = record.get("source_id")
-        file_type_id = record.get("file_type_id")
+        entity_id = record.get("rzp_entity_id") or record.get("entity_id")
+        if not entity_id:
+            return False
 
-        # TODO: Implement actual check for record pairs
-        # For now, assume records with entity_id have both
-        return bool(record.get("rzp_entity_id") or record.get("entity_id"))
+        try:
+            # Fetch recon results for this entity to find record pairs
+            result = self.data_fetcher.recon_client.get_recon_result_by_entity_id(
+                entity_id=entity_id,
+                workspace_id=workspace_id,
+            )
+
+            if not result["success"]:
+                logger.debug(
+                    "Failed to fetch recon results for entity",
+                    entity_id=entity_id,
+                    error=result.get("error"),
+                )
+                # Fallback: assume records with entity_id might have pairs
+                return bool(entity_id)
+
+            results = result.get("results", [])
+            if not results:
+                return False
+
+            # Check if we have both internal and MIS records
+            # Internal records typically have is_internal=True or come from internal sources
+            # MIS records have is_internal=False or come from MIS sources
+            has_internal = False
+            has_mis = False
+
+            # Get file types to identify internal vs MIS
+            file_types_result = self.data_fetcher.recon_client.get_file_types(workspace_id)
+            internal_file_type_ids = set()
+            mis_file_type_ids = set()
+
+            if file_types_result["success"]:
+                file_types = file_types_result.get("file_types", [])
+                for file_type in file_types:
+                    file_type_name = file_type.get("name", "").lower()
+                    file_type_id = file_type.get("id")
+                    if "internal" in file_type_name or "rzp" in file_type_name:
+                        internal_file_type_ids.add(file_type_id)
+                    elif "mis" in file_type_name or "bank" in file_type_name:
+                        mis_file_type_ids.add(file_type_id)
+
+            # Check results for internal and MIS records
+            for res in results:
+                file_type_id = res.get("file_type_id") or res.get("source_id")
+                is_internal_flag = res.get("is_internal", False)
+                
+                if is_internal_flag or (file_type_id in internal_file_type_ids):
+                    has_internal = True
+                elif not is_internal_flag or (file_type_id in mis_file_type_ids):
+                    has_mis = True
+
+            return has_internal and has_mis
+
+        except Exception as e:
+            logger.warning(
+                "Exception checking record pairs",
+                entity_id=entity_id,
+                error=str(e),
+            )
+            # Fallback: assume records with entity_id might have pairs
+            return bool(entity_id)
 
     def _get_internal_and_mis_data(
         self, record: Dict[str, Any], workspace_id: str
     ) -> Tuple[Optional[Dict[str, Any]], Optional[Dict[str, Any]]]:
         """
-        Get internal and MIS data for a record.
+        Get internal and MIS data for a record by fetching recon results.
 
         Args:
             record: Record to get data for
@@ -221,12 +276,79 @@ class RuleAnalyzer:
         Returns:
             Tuple of (internal_data, mis_data)
         """
-        # TODO: Implement actual data fetching for internal and MIS records
-        # This would fetch related records from recon_result or record pairs
         entity_id = record.get("rzp_entity_id") or record.get("entity_id")
+        if not entity_id:
+            return None, None
 
-        # Simplified: return record data as both
-        return record, record
+        try:
+            # Fetch recon results for this entity
+            result = self.data_fetcher.recon_client.get_recon_result_by_entity_id(
+                entity_id=entity_id,
+                workspace_id=workspace_id,
+            )
+
+            if not result["success"]:
+                logger.warning(
+                    "Failed to fetch recon results for entity",
+                    entity_id=entity_id,
+                    error=result.get("error"),
+                )
+                return None, None
+
+            results = result.get("results", [])
+            if not results:
+                return None, None
+
+            # Get file types to identify internal vs MIS
+            file_types_result = self.data_fetcher.recon_client.get_file_types(workspace_id)
+            internal_file_type_ids = set()
+            mis_file_type_ids = set()
+
+            if file_types_result["success"]:
+                file_types = file_types_result.get("file_types", [])
+                for file_type in file_types:
+                    file_type_name = file_type.get("name", "").lower()
+                    file_type_id = file_type.get("id")
+                    if "internal" in file_type_name or "rzp" in file_type_name:
+                        internal_file_type_ids.add(file_type_id)
+                    elif "mis" in file_type_name or "bank" in file_type_name:
+                        mis_file_type_ids.add(file_type_id)
+
+            # Separate internal and MIS records
+            internal_records = []
+            mis_records = []
+
+            for res in results:
+                file_type_id = res.get("file_type_id") or res.get("source_id")
+                is_internal_flag = res.get("is_internal", False)
+                
+                if is_internal_flag or (file_type_id in internal_file_type_ids):
+                    internal_records.append(res)
+                elif not is_internal_flag or (file_type_id in mis_file_type_ids):
+                    mis_records.append(res)
+
+            # Return first internal and first MIS record
+            internal_data = internal_records[0] if internal_records else None
+            mis_data = mis_records[0] if mis_records else None
+
+            if not internal_data or not mis_data:
+                logger.debug(
+                    "Missing internal or MIS data for entity",
+                    entity_id=entity_id,
+                    has_internal=bool(internal_data),
+                    has_mis=bool(mis_data),
+                    total_results=len(results),
+                )
+
+            return internal_data, mis_data
+
+        except Exception as e:
+            logger.error(
+                "Exception fetching internal/MIS data",
+                entity_id=entity_id,
+                error=str(e),
+            )
+            return None, None
 
     def _evaluate_rule(
         self,
@@ -368,4 +490,152 @@ class RuleAnalyzer:
             return result.strip()
         else:
             return str(result).strip()
+
+    def analyze_from_report(
+        self, records: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
+        """
+        Analyze records from a parsed report (CSV/Excel) for rule matching failures.
+        No API calls needed - works directly on the report data.
+
+        Args:
+            records: List of records from parsed report
+
+        Returns:
+            Dict containing findings with failed rules and suggestions
+        """
+        try:
+            logger.info(
+                "Starting rule analysis from report",
+                record_count=len(records),
+            )
+
+            findings = []
+            unreconciled_count = 0
+
+            for record in records:
+                # Check for unreconciled records
+                recon_status = (
+                    record.get("recon_status") or 
+                    record.get("Recon Status") or 
+                    record.get("status") or
+                    ""
+                ).lower()
+                
+                # Only analyze unreconciled records
+                if "unreconciled" in recon_status or "pending" in recon_status or "failed" in recon_status:
+                    unreconciled_count += 1
+                    
+                    record_id = (
+                        record.get("record_id") or 
+                        record.get("id") or
+                        record.get("Record ID")
+                    )
+                    entity_id = (
+                        record.get("entity_id") or 
+                        record.get("rzp_entity_id") or
+                        record.get("Entity ID") or
+                        record.get("payment_id")
+                    )
+                    
+                    # Check for common mismatch indicators in the report
+                    mismatch_details = {}
+                    suggested_remarks = []
+                    
+                    # Check amount mismatch
+                    internal_amount = record.get("internal_amount") or record.get("amount")
+                    bank_amount = record.get("bank_amount") or record.get("mis_amount")
+                    
+                    if internal_amount and bank_amount and str(internal_amount) != str(bank_amount):
+                        mismatch_details["amount_mismatch"] = {
+                            "internal": internal_amount,
+                            "bank": bank_amount,
+                        }
+                        suggested_remarks.append(f"Amount mismatch: Internal={internal_amount}, Bank={bank_amount}")
+                    
+                    # Check RRN mismatch
+                    internal_rrn = record.get("rrn") or record.get("internal_rrn") or record.get("payment_id")
+                    bank_rrn = record.get("bank_rrn") or record.get("mis_rrn")
+                    
+                    if internal_rrn and bank_rrn and str(internal_rrn) != str(bank_rrn):
+                        mismatch_details["rrn_mismatch"] = {
+                            "internal": internal_rrn,
+                            "bank": bank_rrn,
+                        }
+                        suggested_remarks.append(f"RRN mismatch: Internal={internal_rrn}, Bank={bank_rrn}")
+                    
+                    # Check for existing art_remarks in report
+                    existing_remarks = (
+                        record.get("art_remarks") or 
+                        record.get("ART Remarks") or 
+                        record.get("remarks") or
+                        record.get("Remarks") or
+                        ""
+                    )
+                    
+                    # Check for failure reason
+                    failure_reason = (
+                        record.get("failure_reason") or 
+                        record.get("Failure Reason") or
+                        record.get("error") or
+                        ""
+                    )
+                    
+                    if failure_reason:
+                        suggested_remarks.append(f"Failure reason: {failure_reason}")
+                    
+                    # Generate AI-powered remarks if we have mismatches and LLM is available
+                    if mismatch_details and self.llm:
+                        try:
+                            ai_remarks = self._generate_ai_art_remarks(
+                                rule={"id": "report_analysis", "expression": "N/A"},
+                                mismatch_details=mismatch_details,
+                                internal_data=record,
+                                mis_data=record,
+                            )
+                            suggested_remarks = [ai_remarks]
+                        except Exception as e:
+                            logger.warning(f"AI remarks generation failed: {e}")
+                    
+                    # Only add finding if we found issues
+                    if mismatch_details or failure_reason or "unreconciled" in recon_status:
+                        findings.append({
+                            "record_id": record_id,
+                            "entity_id": entity_id,
+                            "recon_status": recon_status,
+                            "mismatch_details": mismatch_details,
+                            "suggested_art_remarks": "; ".join(suggested_remarks) if suggested_remarks else "Manual review required",
+                            "existing_remarks": existing_remarks,
+                            "failure_reason": failure_reason,
+                            "issue": "rule_matching_failure",
+                            "raw_record": record,
+                        })
+
+            logger.info(
+                "Rule analysis from report completed",
+                total_records=len(records),
+                unreconciled_count=unreconciled_count,
+                findings_count=len(findings),
+            )
+
+            return {
+                "success": True,
+                "findings": findings,
+                "total_records": len(records),
+                "total_unreconciled": unreconciled_count,
+                "rule_failures": len(findings),
+                "scenario": "C",
+                "scenario_name": "rule_matching_failure",
+            }
+
+        except Exception as e:
+            logger.error(
+                "Failed to analyze rules from report",
+                error=str(e),
+            )
+            return {
+                "success": False,
+                "error": f"Exception: {str(e)}",
+                "findings": [],
+            }
 

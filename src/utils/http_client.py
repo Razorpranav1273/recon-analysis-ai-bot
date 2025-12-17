@@ -235,6 +235,16 @@ class HTTPClient:
             response = self.session.request(method, **request_kwargs)
             duration = time.perf_counter() - start
 
+            # Log response details for debugging (especially for 403 errors)
+            if response.status_code == 403:
+                logger.error(
+                    f"HTTP 403 Forbidden for {method} {url}",
+                    status_code=response.status_code,
+                    response_text=response.text[:500],  # First 500 chars
+                    request_headers=dict(request_headers),
+                    has_auth=bool(request_headers.get("Authorization")),
+                )
+
             result = self._parse_response(response, url)
             return result
 
@@ -296,6 +306,22 @@ class HTTPClient:
                 return {
                     "success": True,
                     "status_code": response.status_code,
+                    "data": response_data,
+                    "url": url,
+                    "timestamp": datetime.now().isoformat(),
+                }
+            elif response.status_code == 403:
+                error_msg = "HTTP 403: Forbidden - Authentication failed or insufficient permissions"
+                if isinstance(response_data, dict):
+                    error_msg = response_data.get("message", response_data.get("error", error_msg))
+                elif isinstance(response_data, str):
+                    error_msg = response_data[:200] if len(response_data) > 200 else response_data
+                
+                return {
+                    "success": False,
+                    "status_code": response.status_code,
+                    "error": error_msg,
+                    "error_type": "forbidden",
                     "data": response_data,
                     "url": url,
                     "timestamp": datetime.now().isoformat(),

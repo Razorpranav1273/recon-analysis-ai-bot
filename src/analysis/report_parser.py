@@ -105,27 +105,29 @@ class ReportParser:
     def _process_dataframe(self, df: pd.DataFrame) -> Dict[str, Any]:
         """Process pandas DataFrame into structured records."""
         try:
-            # Normalize column names (lowercase, strip spaces)
-            df.columns = df.columns.str.lower().str.strip()
+            # Normalize column names (lowercase, strip spaces, replace spaces with underscores)
+            df.columns = df.columns.str.lower().str.strip().str.replace(' ', '_')
 
-            # Extract common fields (adjust based on actual ART report format)
+            # Convert entire dataframe to records (keep all columns)
             records = []
             for _, row in df.iterrows():
-                record = {
-                    "transaction_date": self._extract_date(row),
-                    "record_id": self._extract_value(row, ["record_id", "id", "record id"]),
-                    "recon_status": self._extract_value(
-                        row, ["recon_status", "status", "recon status"]
-                    ),
-                    "art_remarks": self._extract_value(
-                        row, ["art_remarks", "remarks", "art remarks", "note"]
-                    ),
-                    "amount": self._extract_value(row, ["amount", "transaction_amount"]),
-                    "entity_id": self._extract_value(
-                        row, ["entity_id", "entity id", "rzp_entity_id"]
-                    ),
-                    "raw_data": row.to_dict(),
-                }
+                # Convert row to dict, keeping all columns
+                record = row.to_dict()
+                
+                # Also add normalized versions of common fields for consistency
+                record["transaction_date"] = self._extract_date(row)
+                record["record_id"] = self._extract_value(row, ["record_id", "id"])
+                record["entity_id"] = self._extract_value(row, ["entity_id", "rzp_entity_id", "payment_id"])
+                record["recon_status"] = self._extract_value(row, ["recon_status", "status"])
+                record["recon_at"] = self._extract_value(row, ["recon_at", "reconciled_at", "recon_timestamp"])
+                record["amount"] = self._extract_value(row, ["amount", "transaction_amount", "internal_amount"])
+                record["bank_amount"] = self._extract_value(row, ["bank_amount", "mis_amount", "external_amount"])
+                record["rrn"] = self._extract_value(row, ["rrn", "internal_rrn", "payment_id"])
+                record["bank_rrn"] = self._extract_value(row, ["bank_rrn", "mis_rrn", "external_rrn"])
+                record["source_type"] = self._extract_value(row, ["source_type", "file_type", "type"])
+                record["art_remarks"] = self._extract_value(row, ["art_remarks", "remarks", "note"])
+                record["failure_reason"] = self._extract_value(row, ["failure_reason", "error", "error_message"])
+                
                 records.append(record)
 
             logger.info(
