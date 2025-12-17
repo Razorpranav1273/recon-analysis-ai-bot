@@ -72,21 +72,65 @@ def create_socket_mode_app():
                 "text": f"Error: {str(e)}",
             })
     
+    # Register list workspaces command handler
+    @app.command("/recon-list-workspaces")
+    def handle_list_workspaces_command(ack, body, respond):
+        """Handle /recon-list-workspaces slash command."""
+        try:
+            # Acknowledge command immediately
+            ack()
+            
+            logger.info("Received /recon-list-workspaces command")
+            
+            # Handle command
+            response = command_handler.handle_list_workspaces()
+            
+            # Send response
+            respond(response)
+            
+        except Exception as e:
+            logger.error("Error handling /recon-list-workspaces command", error=str(e))
+            respond({
+                "response_type": "ephemeral",
+                "text": f"Error: {str(e)}",
+            })
+    
     # Register app mention handler
     @app.event("app_mention")
     def handle_app_mentions(event, say):
-        """Handle app mention events."""
+        """Handle app mention events with natural language processing."""
         try:
+            # Acknowledge immediately
             text = event.get("text", "")
             user = event.get("user", "")
+            channel_id = event.get("channel", "")
             
-            logger.info("Received app mention", text=text, user=user)
+            # Remove bot mention from text
+            # Pattern: <@BOT_USER_ID> or <@BOT_USER_ID|bot_name>
+            import re
+            cleaned_text = re.sub(r"<@[^>]+>", "", text).strip()
             
-            # Simple response for mentions
-            say(f"Hi <@{user}>! Use `/recon-analyze workspace=WORKSPACE_NAME` to analyze reconciliation data.")
+            logger.info(
+                "Received app mention",
+                original_text=text,
+                cleaned_text=cleaned_text,
+                user=user,
+                channel_id=channel_id,
+            )
+            
+            # Handle mention with natural language processing
+            response = command_handler.handle_mention(
+                message_text=cleaned_text,
+                user_id=user,
+                channel_id=channel_id,
+            )
+            
+            # Send response
+            say(response)
             
         except Exception as e:
             logger.error("Error handling app mention", error=str(e))
+            say(f"Sorry, I encountered an error: {str(e)}")
     
     return app, slack_app_token
 

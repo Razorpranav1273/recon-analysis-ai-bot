@@ -96,6 +96,49 @@ class ReconClient:
                 "workspace_name": workspace_name,
             }
 
+    def list_all_workspaces(self) -> Dict[str, Any]:
+        """
+        List all available workspaces.
+
+        Returns:
+            Dict containing list of workspaces or error
+        """
+        try:
+            logger.info("Fetching all workspaces")
+
+            # Call /workspaces API
+            url = f"{self.base_url}/api/v1/workspaces"
+            response = self.http_client.get(url)
+
+            if not response["success"]:
+                return {
+                    "success": False,
+                    "error": response.get("error", "Failed to fetch workspaces"),
+                    "workspaces": [],
+                }
+
+            # Parse response
+            response_data = response.get("data", {})
+            if isinstance(response_data, list):
+                workspaces = response_data
+            elif isinstance(response_data, dict):
+                workspaces = response_data.get("data", response_data.get("workspaces", []))
+            else:
+                workspaces = []
+
+            return {
+                "success": True,
+                "workspaces": workspaces if isinstance(workspaces, list) else [],
+            }
+
+        except Exception as e:
+            logger.error("Failed to list workspaces", error=str(e))
+            return {
+                "success": False,
+                "error": f"Exception: {str(e)}",
+                "workspaces": [],
+            }
+
     def get_unreconciled_records(
         self,
         workspace_id: str,

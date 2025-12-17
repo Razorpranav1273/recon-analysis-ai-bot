@@ -142,10 +142,33 @@ gunicorn -w 4 -b 0.0.0.0:3000 src.bot.slack_bot:flask_app
 
 ## Usage
 
-### Slack Command
+### Natural Language (Recommended) 🎯
 
-Use the `/recon-analyze` slash command in Slack:
+You can interact with the bot naturally by mentioning it:
 
+**List Workspaces:**
+- `@Recon Analysis Bot list workspaces`
+- `@Recon Analysis Bot show all workspaces`
+- `@Recon Analysis Bot what workspaces are available?`
+
+**Analyze Workspace:**
+- `@Recon Analysis Bot analyze workspace XYZ`
+- `@Recon Analysis Bot check recon for workspace ABC`
+- `@Recon Analysis Bot run analysis on workspace TEST`
+
+**Get Help:**
+- `@Recon Analysis Bot help`
+- `@Recon Analysis Bot hello`
+- `@Recon Analysis Bot what can you do?`
+
+### Slash Commands
+
+**List Workspaces:**
+```
+/recon-list-workspaces
+```
+
+**Analyze Workspace:**
 ```
 /recon-analyze workspace=WORKSPACE_NAME [report_url=URL]
 ```
