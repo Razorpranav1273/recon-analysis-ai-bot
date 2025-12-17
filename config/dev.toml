@@ -11,6 +11,7 @@ debug = true
 [slack]
 signing_secret = "${SLACK_SIGNING_SECRET}"
 bot_token = "${SLACK_BOT_TOKEN}"
+app_token = "${SLACK_APP_TOKEN}"
 
 [logging]
 level = "DEBUG"

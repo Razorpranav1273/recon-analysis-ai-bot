@@ -228,15 +228,33 @@ class TrinoClient:
                     "row_count": 0,
                 }
 
-            # Build query with parameterized placeholders
-            # Note: Trino uses ? for parameters, but we'll use format for now
-            # In production, this should use proper parameterized queries
-            # This is a template that should be customized based on actual schema
-            # Users should provide the actual query for their txn_entity table
+            # Build query with safe parameter handling
+            # Note: Trino doesn't support parameterized queries like PostgreSQL
+            # So we validate and sanitize inputs instead
             
-            # Escape entity IDs to prevent SQL injection
-            # In production, use proper parameterized queries
-            safe_entity_ids = [str(eid).replace("'", "''") for eid in entity_ids]
+            # Validate entity IDs (should be alphanumeric, hyphens, underscores)
+            # This prevents SQL injection by only allowing safe characters
+            import re
+            safe_pattern = re.compile(r'^[a-zA-Z0-9_-]+$')
+            
+            safe_entity_ids = []
+            for eid in entity_ids:
+                eid_str = str(eid).strip()
+                if safe_pattern.match(eid_str):
+                    # Escape single quotes for SQL (double them)
+                    safe_entity_ids.append(eid_str.replace("'", "''"))
+                else:
+                    logger.warning(f"Invalid entity_id format, skipping: {eid_str}")
+            
+            if not safe_entity_ids:
+                return {
+                    "success": False,
+                    "error": "No valid entity IDs provided",
+                    "results": [],
+                    "row_count": 0,
+                }
+            
+            # Build IN clause safely
             entity_ids_str = "', '".join(safe_entity_ids)
             
             query = f"""
