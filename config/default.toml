@@ -1,0 +1,53 @@
+[app]
+name = "recon-analysis-bot"
+version = "1.0.0"
+description = "Slack bot for recon analysis"
+
+[recon]
+base_url = "http://localhost:5000"
+api_key = ""
+
+[trino]
+host = "localhost"
+port = 8080
+catalog = "hive"
+schema = "default"
+username = "user"
+proto = "http"
+timeout = 60
+debug = false
+
+[slack]
+signing_secret = ""
+bot_token = ""
+app_token = ""
+
+[logging]
+level = "INFO"
+format = "console"
+include_caller_info = true
+include_timestamps = true
+
+[azure]
+endpoint = ""
+api_key = ""
+api_version = "2024-02-15-preview"
+deployment = ""
+temperature = 0.2
+max_tokens = 4000
+
+[llm]
+max_attempts = 3
+initial_backoff_s = 5
+backoff_factor = 2.0
+max_backoff_s = 60
+jitter_s = 1.0
+respect_retry_after = true
+
+[ollama]
+enabled = false
+base_url = "http://localhost:11434"
+model = "llama2"
+# Available models: llama2, llama3, mistral, codellama, phi, etc.
+# Run 'ollama list' to see available models
+
