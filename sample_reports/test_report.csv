@@ -1,0 +1,12 @@
+record_id,entity_id,recon_status,recon_at,transaction_date,amount,bank_amount,rrn,bank_rrn,source_type,failure_reason,art_remarks
+1,pay_ABC123,Reconciled,,2024-01-15,1000,1000,RRN001,RRN001,internal,,
+2,pay_DEF456,Reconciled,2024-01-15 10:30:00,2024-01-15,500,500,RRN002,RRN002,internal,,
+3,pay_GHI789,Unreconciled,,2024-01-16,750,800,RRN003,RRN003,internal,Amount mismatch,
+4,pay_JKL012,Pending,,2024-01-16,1200,1200,RRN004,RRN005,internal,RRN mismatch,
+5,pay_MNO345,Reconciled,,2024-01-17,2000,2000,RRN006,RRN006,mis,,
+6,,Unreconciled,,2024-01-17,3000,3000,RRN007,RRN007,mis,Missing internal data,
+7,pay_PQR678,Reconciled,2024-01-18 14:20:00,2024-01-18,450,450,RRN008,RRN008,internal,,
+8,pay_STU901,Unreconciled,,2024-01-18,600,650,RRN009,RRN010,mis,Amount and RRN mismatch,
+9,pay_VWX234,Reconciled,,2024-01-19,1500,1500,RRN011,RRN011,internal,,
+10,pay_YZA567,Failed,,2024-01-19,800,800,RRN012,RRN012,internal,Processing error,
+

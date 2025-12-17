@@ -60,8 +60,22 @@ class SlackService:
             List of Slack Block Kit blocks
         """
         try:
-            workspace_name = analysis_results.get("workspace_name", "Unknown")
-            workspace_id = analysis_results.get("workspace_id", "")
+            # Support both old format (workspace_name) and new format (report_source)
+            report_source = analysis_results.get("report_source", "")
+            workspace_name = analysis_results.get("workspace_name", "")
+            total_records = analysis_results.get("total_records", 0)
+            
+            # Determine title based on what we have
+            if report_source:
+                # Shorten the report source for display
+                display_name = report_source.split("/")[-1] if "/" in report_source else report_source
+                if len(display_name) > 40:
+                    display_name = display_name[:37] + "..."
+                title = f"📊 Recon Analysis Report"
+            elif workspace_name:
+                title = f"Recon Analysis Report: {workspace_name}"
+            else:
+                title = "Recon Analysis Report"
 
             blocks = []
 
@@ -70,10 +84,21 @@ class SlackService:
                 "type": "header",
                 "text": {
                     "type": "plain_text",
-                    "text": f"Recon Analysis Report: {workspace_name}",
+                    "text": title,
                     "emoji": True,
                 },
             })
+            
+            # Source info if available
+            if report_source:
+                display_source = report_source.split("/")[-1] if "/" in report_source else report_source
+                blocks.append({
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": f"*Source:* `{display_source}` | *Records analyzed:* {total_records}",
+                    },
+                })
 
             # Summary section
             summary_blocks = self._create_summary_section(analysis_results)

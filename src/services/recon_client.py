@@ -19,21 +19,58 @@ class ReconClient:
         """Initialize recon client with configuration."""
         self.base_url = get_config_value("recon.base_url", "http://localhost:5000")
         self.api_key = get_config_value("recon.api_key", "")
+        self.api_username = get_config_value("recon.api_username", "")
+        self.api_password = get_config_value("recon.api_password", "")
+        self.basic_auth_token = get_config_value("recon.basic_auth_token", "")
         self.http_client = HTTPClient(
             verify_ssl=False, timeout=60, use_shared_session=True
         )
 
-        # Set API key in headers if provided
-        if self.api_key:
+        # Set authentication: Priority order:
+        # 1. Basic Auth token (if provided directly)
+        # 2. Username + Password (to build Basic Auth)
+        # 3. Bearer token (fallback)
+        
+        if self.basic_auth_token:
+            # Use Basic Auth token directly (e.g., "Basic cmVjb25fYXBpX3VzZXI6c3RhZ2UuYXBpQGFydA==")
+            auth_header = self.basic_auth_token
+            if not auth_header.startswith("Basic "):
+                auth_header = f"Basic {auth_header}"
+            self.http_client.session.headers.update(
+                {"Authorization": auth_header}
+            )
+            logger.info(
+                "Recon client initialized with Basic Auth token",
+                base_url=self.base_url,
+            )
+        elif self.api_username and self.api_password:
+            # Basic Authentication (username:password)
+            import base64
+            credentials = f"{self.api_username}:{self.api_password}"
+            encoded_creds = base64.b64encode(credentials.encode()).decode('utf-8')
+            self.http_client.session.headers.update(
+                {"Authorization": f"Basic {encoded_creds}"}
+            )
+            logger.info(
+                "Recon client initialized with Basic Auth (username:password)",
+                base_url=self.base_url,
+                username=self.api_username,
+            )
+        elif self.api_key:
+            # Bearer token (fallback)
             self.http_client.session.headers.update(
                 {"Authorization": f"Bearer {self.api_key}"}
             )
-
-        logger.info(
-            "Recon client initialized",
-            base_url=self.base_url,
-            has_api_key=bool(self.api_key),
-        )
+            logger.info(
+                "Recon client initialized with Bearer token",
+                base_url=self.base_url,
+                has_api_key=bool(self.api_key),
+            )
+        else:
+            logger.warning(
+                "Recon client initialized without authentication",
+                base_url=self.base_url,
+            )
 
     def get_workspace_by_name(self, workspace_name: str) -> Dict[str, Any]:
         """
@@ -50,7 +87,18 @@ class ReconClient:
 
             # Call /workspaces API and filter by name
             url = f"{self.base_url}/api/v1/workspaces"
+            logger.debug("Calling workspaces API", url=url, headers=self.http_client.session.headers.get("Authorization", "None"))
             response = self.http_client.get(url)
+            
+            # Log response details for debugging
+            if not response["success"]:
+                logger.error(
+                    "Failed to fetch workspaces",
+                    url=url,
+                    status_code=response.get("status_code"),
+                    error=response.get("error"),
+                    response_body=response.get("data", {}),
+                )
 
             if not response["success"]:
                 return {
@@ -332,6 +380,83 @@ class ReconClient:
                 "success": False,
                 "error": f"Exception: {str(e)}",
                 "results": [],
+            }
+
+    def check_file_ingestion(
+        self, workspace_id: str, transaction_date: str, file_type_name: str = "internal"
+    ) -> Dict[str, Any]:
+        """
+        Check if file was ingested for a given date.
+
+        Args:
+            workspace_id: Workspace ID
+            transaction_date: Transaction date (YYYY-MM-DD)
+            file_type_name: File type name filter (e.g., "internal", "rzp")
+
+        Returns:
+            Dict containing ingestion status
+        """
+        try:
+            logger.info(
+                "Checking file ingestion",
+                workspace_id=workspace_id,
+                transaction_date=transaction_date,
+                file_type_name=file_type_name,
+            )
+
+            # Use file_details API with date filter
+            url = f"{self.base_url}/api/v1/file_details"
+            params = {
+                "workspace_id": workspace_id,
+                "transaction_date": transaction_date,
+            }
+            response = self.http_client.get(url, params=params)
+
+            if response["success"]:
+                data = response.get("data", {})
+                file_details = data.get("data", []) if isinstance(data, dict) else data
+                
+                if not isinstance(file_details, list):
+                    file_details = [file_details] if file_details else []
+
+                # Filter for internal file types
+                internal_files = []
+                for file_detail in file_details:
+                    file_type = file_detail.get("file_type", {})
+                    if isinstance(file_type, dict):
+                        file_type_name_lower = file_type.get("name", "").lower()
+                    else:
+                        file_type_name_lower = str(file_type).lower()
+
+                    # Check if it's an internal file type
+                    if file_type_name.lower() in file_type_name_lower or "internal" in file_type_name_lower or "rzp" in file_type_name_lower:
+                        # Check ingestion status
+                        ingestion_status = file_detail.get("ingestion_status")
+                        ingestion_status_code = file_detail.get("ingestion_status_code")
+                        
+                        # File is ingested if status is "processed" or status_code is 200
+                        if ingestion_status == "processed" or ingestion_status_code == 200:
+                            internal_files.append(file_detail)
+
+                return {
+                    "success": True,
+                    "file_ingested": len(internal_files) > 0,
+                    "file_count": len(internal_files),
+                    "files": internal_files,
+                }
+
+            return {
+                "success": False,
+                "error": response.get("error", "Failed to check file ingestion"),
+                "file_ingested": False,
+            }
+
+        except Exception as e:
+            logger.error("Failed to check file ingestion", error=str(e))
+            return {
+                "success": False,
+                "error": f"Exception: {str(e)}",
+                "file_ingested": False,
             }
 
     def get_rules(
