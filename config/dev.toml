@@ -29,3 +29,7 @@ enabled = true
 base_url = "http://localhost:11434"
 model = "llama2"
 
+[local_db]
+enabled = true
+db_path = "local_db.sqlite"
+

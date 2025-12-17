@@ -1,0 +1,142 @@
+rule_recon_state_map,,,,,,,,,,,,,
+id,merchant_id,workspace_id,rule_expression,file_type1_id,file_type2_id,recon_state_id,created_at,updated_at,deleted_at,seq_number,workflow_id,job_context_id,is_unreconciled_enrichment_rule
+3519,1000PGRazorpay,NuSS853m4g0FSz,8199,O1Y4BLW5oe08I3,NuSSCThn8s0E05,2238,1740471084,1740471084,,,,,FALSE
+1836,1000PGRazorpay,NuSS853m4g0FSz,5056 and 4830 and 4831 and (4832 or 6942) and 4833,NuSSCivzNm01QX,NurQWWwP8j0By7,905,1712307226,1729583704,,,,,FALSE
+1792,1000PGRazorpay,NuSS853m4g0FSz,4734 and 4741 and 4739 and 8649,NuSSCivzNm01QX,NuSSCThn8s0E05,909,1712214644,1744885529,,,,,FALSE
+1791,1000PGRazorpay,NuSS853m4g0FSz,4734 and 4735 and 4740 and 4739 and 8649,NuSSCivzNm01QX,NuSSCThn8s0E05,908,1712214644,1744885755,,,,,FALSE
+1793,1000PGRazorpay,NuSS853m4g0FSz,4742 and 4743 and 4744 and 8649,NuSSCivzNm01QX,NuSSCThn8s0E05,906,1712214645,1744885770,,,,,FALSE
+1795,1000PGRazorpay,NuSS853m4g0FSz,4734 and 4746 and 8649,NuSSCivzNm01QX,NuSSCThn8s0E05,914,1712214646,1744885784,,,,,FALSE
+1794,1000PGRazorpay,NuSS853m4g0FSz,4734 and 4745 and 8649,NuSSCivzNm01QX,NuSSCThn8s0E05,913,1712214645,1744885804,,,,,FALSE
+1837,1000PGRazorpay,NuSS853m4g0FSz,4833 and 4835 and 4836 and 4837,NuSSCivzNm01QX,NurQWWwP8j0By7,907,1712307330,1712307367,,,,,FALSE
+1853,1000PGRazorpay,NuSS853m4g0FSz,4869 and 4879 and 4871 and 4872,O1Y4BLW5oe08I3,NurQWWwP8j0By7,907,1713763716,1713866447,,,,,FALSE
+1850,1000PGRazorpay,NuSS853m4g0FSz,4850 and 4863 and 4994,O1Y4BLW5oe08I3,NuSSCThn8s0E05,914,1713763634,1715925224,,,,,FALSE
+1847,1000PGRazorpay,NuSS853m4g0FSz,4850 and 4857 and 4876 and 4994,O1Y4BLW5oe08I3,NuSSCThn8s0E05,909,1713763588,1715925232,,,,,FALSE
+1848,1000PGRazorpay,NuSS853m4g0FSz,4877 and 4860 and 4861 and 4994,O1Y4BLW5oe08I3,NuSSCThn8s0E05,906,1713763606,1715925240,,,,,FALSE
+1851,1000PGRazorpay,NuSS853m4g0FSz,4850 and 4851 and 4876 and 4864 and 4994,O1Y4BLW5oe08I3,NuSSCThn8s0E05,912,1713763651,1715925246,,,,,FALSE
+1845,1000PGRazorpay,NuSS853m4g0FSz,4850 and 4851 and (4852 or 4853 or 4854) and 4876 and 4994,O1Y4BLW5oe08I3,NuSSCThn8s0E05,905,1713763521,1715925256,,,,,FALSE
+1846,1000PGRazorpay,NuSS853m4g0FSz,4850 and 4851 and 4856 and 4876 and 4994,O1Y4BLW5oe08I3,NuSSCThn8s0E05,908,1713763535,1715925267,,,,,FALSE
+1852,1000PGRazorpay,NuSS853m4g0FSz,4865 and 4996 and 4878 and 4868 and 4869,O1Y4BLW5oe08I3,NurQWWwP8j0By7,905,1713763696,1715929952,,,,,FALSE
+1891,1000PGRazorpay,NuSS853m4g0FSz,4997 and 4995 and 4987 and (4988 or 5196) and 4989,OAtoKmuFPR01GC,NurQWWwP8j0By7,905,1715868184,1717756427,,,,,FALSE
+1892,1000PGRazorpay,NuSS853m4g0FSz,4989 and 4990 and 4991 and 4992,OAtoKmuFPR01GC,NurQWWwP8j0By7,907,1715868258,1715868258,,,,,FALSE
+1884,1000PGRazorpay,NuSS853m4g0FSz,4971 and 4972 and 4993,OAtoKmuFPR01GC,NuSSCThn8s0E05,913,1715867378,1715925033,,,,,FALSE
+1885,1000PGRazorpay,NuSS853m4g0FSz,4971 and 4973 and 4993,OAtoKmuFPR01GC,NuSSCThn8s0E05,914,1715867461,1715925108,,,,,FALSE
+1886,1000PGRazorpay,NuSS853m4g0FSz,4971 and 4974 and 4975 and 4993,OAtoKmuFPR01GC,NuSSCThn8s0E05,909,1715867806,1715925133,,,,,FALSE
+1887,1000PGRazorpay,NuSS853m4g0FSz,4976 and 4977 and 4978 and 4993,OAtoKmuFPR01GC,NuSSCThn8s0E05,906,1715867910,1715925140,,,,,FALSE
+1888,1000PGRazorpay,NuSS853m4g0FSz,4971 and 4979 and 4975 and 4980 and 4993,OAtoKmuFPR01GC,NuSSCThn8s0E05,912,1715867971,1715925148,,,,,FALSE
+1889,1000PGRazorpay,NuSS853m4g0FSz,4971 and 4979 and (4981 or 4982 or 4983) and 4975 and 4993,OAtoKmuFPR01GC,NuSSCThn8s0E05,905,1715868032,1715925166,,,,,FALSE
+1890,1000PGRazorpay,NuSS853m4g0FSz,4971 and 4979 and 4984 and 4975 and 4993,OAtoKmuFPR01GC,NuSSCThn8s0E05,908,1715868093,1715925174,,,,,FALSE
+1849,1000PGRazorpay,NuSS853m4g0FSz,4850 and 4862 and 4994,O1Y4BLW5oe08I3,NuSSCThn8s0E05,913,1713763621,1715925218,,,,,FALSE
+3365,1000PGRazorpay,NuSS853m4g0FSz,4997 and 7840 and 4987 and (4988 or 5196) and 4989,OAtoKmuFPR01GC,NurQWWwP8j0By7,909,1736233792,1736233792,,,,,FALSE
+3366,1000PGRazorpay,NuSS853m4g0FSz,4865 and 7841 and 4878 and 4868 and 4869,O1Y4BLW5oe08I3,NurQWWwP8j0By7,909,1736236944,1736236944,,,,,FALSE
+1790,1000PGRazorpay,NuSS853m4g0FSz,4734 and 4735 and (4736 or 4737 or 4738) and 4739 and 8649,NuSSCivzNm01QX,NuSSCThn8s0E05,905,1712214644,1744885268,,,,,FALSE
+1796,1000PGRazorpay,NuSS853m4g0FSz,4734 and 4735 and 4739 and 4747 and 8649,NuSSCivzNm01QX,NuSSCThn8s0E05,912,1712214646,1744885728,,,,,FALSE
+,,,,,,,,,,,,,
+Rules ,,,,,,,,,,,,,
+id,workspace_id,merchant_id,rule,file_type1_id,file_type2_id,is_self_rule,created_at,updated_at,deleted_at,job_context_id,,,
+4734,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report.extracted_payment_id == rzp_payment_report.pay_id,NuSSCivzNm01QX,NuSSCThn8s0E05,FALSE,1712214643,1712214643,,,,,
+4735,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report.abs_amount == rzp_payment_report.abs_amount,NuSSCivzNm01QX,NuSSCThn8s0E05,FALSE,1712214643,1712214644,,,,,
+4736,NuSS853m4g0FSz,1000PGRazorpay,rzp_payment_report.status == 'captured',NuSSCivzNm01QX,NuSSCThn8s0E05,FALSE,1712214644,1712214644,,,,,
+4737,NuSS853m4g0FSz,1000PGRazorpay,rzp_payment_report.status == 'authorized',NuSSCivzNm01QX,NuSSCThn8s0E05,FALSE,1712214644,1712214644,,,,,
+4738,NuSS853m4g0FSz,1000PGRazorpay,rzp_payment_report.status == 'refunded',NuSSCivzNm01QX,NuSSCThn8s0E05,FALSE,1712214644,1712214644,,,,,
+4739,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report.mstatus == 'S',NuSSCivzNm01QX,NuSSCThn8s0E05,FALSE,1712214644,1712214644,,,,,
+4740,NuSS853m4g0FSz,1000PGRazorpay,rzp_payment_report.status == 'failed',NuSSCivzNm01QX,NuSSCThn8s0E05,FALSE,1712214644,1712214644,,,,,
+4741,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report.abs_amount != rzp_payment_report.abs_amount,NuSSCivzNm01QX,NuSSCThn8s0E05,FALSE,1712214644,1712214644,,,,,
+4742,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report.mstatus != 'S',NuSSCivzNm01QX,NuSSCThn8s0E05,FALSE,1712214645,1712214645,,,,,
+4743,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report.mstatus != null,NuSSCivzNm01QX,NuSSCThn8s0E05,FALSE,1712214645,1712214645,,,,,
+4744,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report.mstatus != '',NuSSCivzNm01QX,NuSSCThn8s0E05,FALSE,1712214645,1712214645,,,,,
+4745,NuSS853m4g0FSz,1000PGRazorpay,rzp_payment_report.method == 'emandate',NuSSCivzNm01QX,NuSSCThn8s0E05,FALSE,1712214645,1712214645,,,,,
+4746,NuSS853m4g0FSz,1000PGRazorpay,rzp_payment_report.method == 'paylater',NuSSCivzNm01QX,NuSSCThn8s0E05,FALSE,1712214646,1712214646,,,,,
+4747,NuSS853m4g0FSz,1000PGRazorpay,rzp_payment_report.status == 'created',NuSSCivzNm01QX,NuSSCThn8s0E05,FALSE,1712214646,1712214646,,,,,
+4829,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report.extracted_payment_id == rzp_refund_report.prn,NuSSCivzNm01QX,NurQWWwP8j0By7,FALSE,1712307225,1712307225,,,,,
+4830,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report.abs_amount == rzp_refund_report.abs_amount,NuSSCivzNm01QX,NurQWWwP8j0By7,FALSE,1712307225,1712307225,,,,,
+4831,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report.mstatus == 'S',NuSSCivzNm01QX,NurQWWwP8j0By7,FALSE,1712307225,1712307226,,,,,
+4832,NuSS853m4g0FSz,1000PGRazorpay,rzp_refund_report.status == 'processed',NuSSCivzNm01QX,NurQWWwP8j0By7,FALSE,1712307226,1712307226,,,,,
+4833,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report.mtransaction_type == 'REFUND',NuSSCivzNm01QX,NurQWWwP8j0By7,FALSE,1712307226,1712307226,,,,,
+4834,NuSS853m4g0FSz,1000PGRazorpay,"bank_payment_report.mtransaction_type == 'REFUND' 
+ 
+
+ bank_payment_report.mtransaction_type == 'REFUND'",NuSSCivzNm01QX,NurQWWwP8j0By7,FALSE,1712307330,1712307330,,,,,
+4835,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report.mstatus != 'S',NuSSCivzNm01QX,NurQWWwP8j0By7,FALSE,1712307330,1712307330,,,,,
+4836,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report.mstatus != null,NuSSCivzNm01QX,NurQWWwP8j0By7,FALSE,1712307330,1712307330,,,,,
+4837,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report.mstatus != '',NuSSCivzNm01QX,NurQWWwP8j0By7,FALSE,1712307330,1712307330,,,,,
+4838,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report.abs_refund_amount == rzp_refund_report.abs_amount,NuSSCivzNm01QX,NurQWWwP8j0By7,FALSE,1712316537,1712316537,,,,,
+4850,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_corp_report.extracted_payment_id == rzp_payment_report.pay_id,O1Y4BLW5oe08I3,NuSSCThn8s0E05,FALSE,1713763521,1713763521,,,,,
+4851,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_corp_report.abs_amount == rzp_payment_report.abs_amount,O1Y4BLW5oe08I3,NuSSCThn8s0E05,FALSE,1713763521,1713763521,,,,,
+4852,NuSS853m4g0FSz,1000PGRazorpay,rzp_payment_report.status == 'captured',O1Y4BLW5oe08I3,NuSSCThn8s0E05,FALSE,1713763521,1713763521,,,,,
+4853,NuSS853m4g0FSz,1000PGRazorpay,rzp_payment_report.status == 'authorized',O1Y4BLW5oe08I3,NuSSCThn8s0E05,FALSE,1713763521,1713763521,,,,,
+4854,NuSS853m4g0FSz,1000PGRazorpay,rzp_payment_report.status == 'refunded',O1Y4BLW5oe08I3,NuSSCThn8s0E05,FALSE,1713763521,1713763521,,,,,
+4855,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_corp_report.mstatus == 'S',O1Y4BLW5oe08I3,NuSSCThn8s0E05,FALSE,1713763521,1713763521,,,,,
+4856,NuSS853m4g0FSz,1000PGRazorpay,rzp_payment_report.status == 'failed',O1Y4BLW5oe08I3,NuSSCThn8s0E05,FALSE,1713763535,1713763535,,,,,
+4857,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_corp_report.abs_amount != rzp_payment_report.abs_amount,O1Y4BLW5oe08I3,NuSSCThn8s0E05,FALSE,1713763588,1713763588,,,,,
+4858,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_corp_report.status == 'S',O1Y4BLW5oe08I3,NuSSCThn8s0E05,FALSE,1713763588,1713763588,,,,,
+4859,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_corp_report.status != 'S',O1Y4BLW5oe08I3,NuSSCThn8s0E05,FALSE,1713763606,1713763606,,,,,
+4860,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_corp_report.status != null,O1Y4BLW5oe08I3,NuSSCThn8s0E05,FALSE,1713763606,1713763606,,,,,
+4861,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_corp_report.status != '',O1Y4BLW5oe08I3,NuSSCThn8s0E05,FALSE,1713763606,1713763606,,,,,
+4862,NuSS853m4g0FSz,1000PGRazorpay,rzp_payment_report.method == 'emandate',O1Y4BLW5oe08I3,NuSSCThn8s0E05,FALSE,1713763621,1713763621,,,,,
+4863,NuSS853m4g0FSz,1000PGRazorpay,rzp_payment_report.method == 'paylater',O1Y4BLW5oe08I3,NuSSCThn8s0E05,FALSE,1713763634,1713763634,,,,,
+4864,NuSS853m4g0FSz,1000PGRazorpay,rzp_payment_report.status == 'created',O1Y4BLW5oe08I3,NuSSCThn8s0E05,FALSE,1713763651,1713763651,,,,,
+4865,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_corp_report.extracted_payment_id == rzp_refund_report.prn,O1Y4BLW5oe08I3,NurQWWwP8j0By7,FALSE,1713763696,1713763696,,,,,
+4866,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_corp_report.abs_refund_amount == rzp_refund_report.abs_amount,O1Y4BLW5oe08I3,NurQWWwP8j0By7,FALSE,1713763696,1713763696,,,,,
+4867,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_corp_report.status == 'S',O1Y4BLW5oe08I3,NurQWWwP8j0By7,FALSE,1713763696,1713763696,,,,,
+4868,NuSS853m4g0FSz,1000PGRazorpay,rzp_refund_report.status == 'processed',O1Y4BLW5oe08I3,NurQWWwP8j0By7,FALSE,1713763696,1713763696,,,,,
+4869,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_corp_report.transaction_type == 'REFUND',O1Y4BLW5oe08I3,NurQWWwP8j0By7,FALSE,1713763696,1713763696,,,,,
+4870,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_corp_report.status != 'S',O1Y4BLW5oe08I3,NurQWWwP8j0By7,FALSE,1713763716,1713763716,,,,,
+4871,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_corp_report.status != null,O1Y4BLW5oe08I3,NurQWWwP8j0By7,FALSE,1713763716,1713763716,,,,,
+4872,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_corp_report.status != '',O1Y4BLW5oe08I3,NurQWWwP8j0By7,FALSE,1713763716,1713763716,,,,,
+4876,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_corp_report.status == 'PAID',O1Y4BLW5oe08I3,NuSSCThn8s0E05,FALSE,1713866333,1713866333,,,,,
+4877,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_corp_report.status != 'PAID',O1Y4BLW5oe08I3,NuSSCThn8s0E05,FALSE,1713866342,1713866342,,,,,
+4878,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_corp_report.status == 'PAID',O1Y4BLW5oe08I3,NurQWWwP8j0By7,FALSE,1713866438,1713866438,,,,,
+4879,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_corp_report.status != 'PAID',O1Y4BLW5oe08I3,NurQWWwP8j0By7,FALSE,1713866447,1713866447,,,,,
+4971,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report_non_TPV.extracted_payment_id == rzp_payment_report.pay_id,OAtoKmuFPR01GC,NuSSCThn8s0E05,FALSE,1715867378,1715867378,,,,,
+4972,NuSS853m4g0FSz,1000PGRazorpay,rzp_payment_report.method == 'emandate',OAtoKmuFPR01GC,NuSSCThn8s0E05,FALSE,1715867378,1715867378,,,,,
+4973,NuSS853m4g0FSz,1000PGRazorpay,rzp_payment_report.method == 'paylater',OAtoKmuFPR01GC,NuSSCThn8s0E05,FALSE,1715867461,1715867461,,,,,
+4974,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report_non_TPV.abs_amount != rzp_payment_report.abs_amount,OAtoKmuFPR01GC,NuSSCThn8s0E05,FALSE,1715867806,1715867806,,,,,
+4975,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report_non_TPV.status == 'S',OAtoKmuFPR01GC,NuSSCThn8s0E05,FALSE,1715867806,1715867806,,,,,
+4976,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report_non_TPV.status != 'S',OAtoKmuFPR01GC,NuSSCThn8s0E05,FALSE,1715867910,1715867910,,,,,
+4977,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report_non_TPV.status != null,OAtoKmuFPR01GC,NuSSCThn8s0E05,FALSE,1715867910,1715867910,,,,,
+4978,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report_non_TPV.status != '',OAtoKmuFPR01GC,NuSSCThn8s0E05,FALSE,1715867910,1715867910,,,,,
+4979,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report_non_TPV.abs_amount == rzp_payment_report.abs_amount,OAtoKmuFPR01GC,NuSSCThn8s0E05,FALSE,1715867971,1715867971,,,,,
+4980,NuSS853m4g0FSz,1000PGRazorpay,rzp_payment_report.status == 'created',OAtoKmuFPR01GC,NuSSCThn8s0E05,FALSE,1715867971,1715867971,,,,,
+4981,NuSS853m4g0FSz,1000PGRazorpay,rzp_payment_report.status == 'captured',OAtoKmuFPR01GC,NuSSCThn8s0E05,FALSE,1715868032,1715868032,,,,,
+4982,NuSS853m4g0FSz,1000PGRazorpay,rzp_payment_report.status == 'authorized',OAtoKmuFPR01GC,NuSSCThn8s0E05,FALSE,1715868032,1715868032,,,,,
+4983,NuSS853m4g0FSz,1000PGRazorpay,rzp_payment_report.status == 'refunded',OAtoKmuFPR01GC,NuSSCThn8s0E05,FALSE,1715868032,1715868032,,,,,
+4984,NuSS853m4g0FSz,1000PGRazorpay,rzp_payment_report.status == 'failed',OAtoKmuFPR01GC,NuSSCThn8s0E05,FALSE,1715868093,1715868093,,,,,
+4985,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report_non_TPV.extracted_payment_id == rzp_refund_report.prn,OAtoKmuFPR01GC,NurQWWwP8j0By7,FALSE,1715868184,1715868184,,,,,
+4986,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report_non_TPV.abs_refund_amount == rzp_refund_report.abs_amount,OAtoKmuFPR01GC,NurQWWwP8j0By7,FALSE,1715868184,1715868184,,,,,
+4987,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report_non_TPV.status == 'S',OAtoKmuFPR01GC,NurQWWwP8j0By7,FALSE,1715868184,1715868184,,,,,
+4988,NuSS853m4g0FSz,1000PGRazorpay,rzp_refund_report.status == 'processed',OAtoKmuFPR01GC,NurQWWwP8j0By7,FALSE,1715868184,1715868184,,,,,
+4989,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report_non_TPV.transaction_type == 'REFUND',OAtoKmuFPR01GC,NurQWWwP8j0By7,FALSE,1715868184,1715868184,,,,,
+4990,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report_non_TPV.status != 'S',OAtoKmuFPR01GC,NurQWWwP8j0By7,FALSE,1715868258,1715868258,,,,,
+4991,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report_non_TPV.status != null,OAtoKmuFPR01GC,NurQWWwP8j0By7,FALSE,1715868258,1715868258,,,,,
+4992,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report_non_TPV.status != '',OAtoKmuFPR01GC,NurQWWwP8j0By7,FALSE,1715868258,1715868258,,,,,
+4993,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report_non_TPV.transaction_type == 'PAYMENT',OAtoKmuFPR01GC,NuSSCThn8s0E05,FALSE,1715925033,1715925033,,,,,
+4994,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_corp_report.transaction_type == 'PAYMENT',O1Y4BLW5oe08I3,NuSSCThn8s0E05,FALSE,1715925217,1715925217,,,,,
+4995,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report_non_TPV.abs_amount == rzp_refund_report.abs_amount,OAtoKmuFPR01GC,NurQWWwP8j0By7,FALSE,1715929725,1715929725,,,,,
+4996,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_corp_report.abs_amount == rzp_refund_report.abs_amount,O1Y4BLW5oe08I3,NurQWWwP8j0By7,FALSE,1715929952,1715929952,,,,,
+4997,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report_non_TPV.payment_id_ext == rzp_refund_report.prn,OAtoKmuFPR01GC,NurQWWwP8j0By7,FALSE,1715931847,1715931847,,,,,
+5056,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report.mpayment_id_ext == rzp_refund_report.prn,NuSSCivzNm01QX,NurQWWwP8j0By7,FALSE,1716884502,1716884502,,,,,
+5196,NuSS853m4g0FSz,1000PGRazorpay,rzp_refund_report.status == 'file_init',OAtoKmuFPR01GC,NurQWWwP8j0By7,FALSE,1717756427,1717756427,,,,,
+6942,NuSS853m4g0FSz,1000PGRazorpay,rzp_refund_report.status == 'file_init',NuSSCivzNm01QX,NurQWWwP8j0By7,FALSE,1729583704,1729583704,,,,,
+7839,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report.abs_amount != rzp_refund_report.abs_amount,NuSSCivzNm01QX,NurQWWwP8j0By7,FALSE,1736233708,1736233708,,,,,
+7840,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report_non_TPV.abs_amount != rzp_refund_report.abs_amount,OAtoKmuFPR01GC,NurQWWwP8j0By7,FALSE,1736233792,1736233792,,,,,
+7841,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_corp_report.abs_amount != rzp_refund_report.abs_amount,O1Y4BLW5oe08I3,NurQWWwP8j0By7,FALSE,1736236944,1736236944,,,,,
+8199,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_corp_report.status == 'FAILED',O1Y4BLW5oe08I3,NuSSCThn8s0E05,FALSE,1740471084,1740471084,,,,,
+8648,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report.mtransaction_type == ‘PAYMENT’,NuSSCivzNm01QX,NuSSCThn8s0E05,FALSE,1744782362,1744782362,,,,,
+8649,NuSS853m4g0FSz,1000PGRazorpay,bank_payment_report.mtransaction_type == 'PAYMENT',NuSSCivzNm01QX,NuSSCThn8s0E05,FALSE,1744885268,1744885268,,,,,
+,,,,,,,,,,,,,
+,,,,,,,,,,,,,
+Recon State ,,,,,,,,,,,,,
+id,merchant_id,workspace_id,state,rank,created_at,updated_at,deleted_at,is_internal,parent_id,art_remarks,,,
+2238,1000PGRazorpay,NuSS853m4g0FSz,IGNORED,3,1738816766,1738816766,,FALSE,,,,,
+2239,1000PGRazorpay,NuSS853m4g0FSz,Failed Payment,3,1738816994,1738817283,,TRUE,2238,,,,
+904,1000PGRazorpay,NuSS853m4g0FSz,Unreconciled,1,1712214639,1712214639,,FALSE,,,,,
+913,1000PGRazorpay,NuSS853m4g0FSz,emandate,2,1712214642,1712214642,,FALSE,,,,,
+905,1000PGRazorpay,NuSS853m4g0FSz,Reconciled,3,1712214640,1712214640,,FALSE,,,,,
+910,1000PGRazorpay,NuSS853m4g0FSz,rrn_mismatch,3,1712214641,1712214641,,TRUE,,,,,
+906,1000PGRazorpay,NuSS853m4g0FSz,Recon_Failed,3,1712214640,1712214640,,FALSE,,,,,
+912,1000PGRazorpay,NuSS853m4g0FSz,PaymentStatusCreated,2,1712214641,1712214641,,TRUE,,,,,
+907,1000PGRazorpay,NuSS853m4g0FSz,Refund_Failed,3,1712214640,1712214640,,FALSE,,,,,
+908,1000PGRazorpay,NuSS853m4g0FSz,Force_Authorization,3,1712214640,1712214640,,TRUE,,,,,
+909,1000PGRazorpay,NuSS853m4g0FSz,Amount_Mismatched,3,1712214640,1712214640,,TRUE,,,,,
+911,1000PGRazorpay,NuSS853m4g0FSz,force_auth_rrn_mismatch,3,1712214641,1712214641,,TRUE,,,,,
+914,1000PGRazorpay,NuSS853m4g0FSz,paylater,2,1712214643,1712214643,,FALSE,,,,,

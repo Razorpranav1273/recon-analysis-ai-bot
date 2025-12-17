@@ -80,18 +80,18 @@ class SlackService:
             blocks.extend(summary_blocks)
 
             # Scenario A: Recon_at not updated
-            scenario_a = analysis_results.get("scenario_a", {})
-            if scenario_a.get("success") and scenario_a.get("findings"):
+            scenario_a = analysis_results.get("scenario_a")
+            if scenario_a and scenario_a.get("findings"):
                 blocks.extend(self._format_scenario_a(scenario_a))
 
             # Scenario B: Missing internal data
-            scenario_b = analysis_results.get("scenario_b", {})
-            if scenario_b.get("success") and scenario_b.get("findings"):
+            scenario_b = analysis_results.get("scenario_b")
+            if scenario_b and scenario_b.get("findings"):
                 blocks.extend(self._format_scenario_b(scenario_b))
 
             # Scenario C: Rule matching failures
-            scenario_c = analysis_results.get("scenario_c", {})
-            if scenario_c.get("success") and scenario_c.get("findings"):
+            scenario_c = analysis_results.get("scenario_c")
+            if scenario_c and scenario_c.get("findings"):
                 blocks.extend(self._format_scenario_c(scenario_c))
 
             # Footer with timestamp
@@ -118,10 +118,33 @@ class SlackService:
         # Summary divider
         blocks.append({"type": "divider"})
 
-        # Summary text
-        scenario_a_count = analysis_results.get("scenario_a", {}).get("needs_update", 0)
-        scenario_b_count = analysis_results.get("scenario_b", {}).get("missing_internal", 0)
-        scenario_c_count = analysis_results.get("scenario_c", {}).get("rule_failures", 0)
+        # Summary text - handle both old and new format
+        scenario_a = analysis_results.get("scenario_a") or {}
+        scenario_b = analysis_results.get("scenario_b") or {}
+        scenario_c = analysis_results.get("scenario_c") or {}
+        
+        # New unified format has "count" key, old format has specific keys
+        if isinstance(scenario_a, dict) and "count" in scenario_a:
+            scenario_a_count = scenario_a.get("count", 0)
+        elif isinstance(scenario_a, dict):
+            scenario_a_count = scenario_a.get("needs_update", 0)
+        else:
+            scenario_a_count = 0
+            
+        if isinstance(scenario_b, dict) and "count" in scenario_b:
+            scenario_b_count = scenario_b.get("count", 0)
+        elif isinstance(scenario_b, dict):
+            scenario_b_count = scenario_b.get("missing_internal", 0)
+        else:
+            scenario_b_count = 0
+            
+        if isinstance(scenario_c, dict) and "count" in scenario_c:
+            scenario_c_count = scenario_c.get("count", 0)
+        elif isinstance(scenario_c, dict):
+            scenario_c_count = scenario_c.get("rule_failures", 0)
+        else:
+            scenario_c_count = 0
+            
         total_issues = scenario_a_count + scenario_b_count + scenario_c_count
 
         # Generate AI-powered summary explanation if LLM is available
@@ -173,20 +196,20 @@ class SlackService:
         findings = scenario_a.get("findings", [])[:10]  # Limit to 10 for display
 
         for finding in findings:
-            record_id = finding.get("record_id", "N/A")
             entity_id = finding.get("entity_id", "N/A")
-            suggestion = finding.get("suggestion", "")
+            file_type_id = finding.get("file_type_id", "N/A")
+            suggestion = finding.get("suggestion", "No suggestion provided")
 
             blocks.append({
                 "type": "section",
                 "fields": [
                     {
                         "type": "mrkdwn",
-                        "text": f"*Record ID:*\n{record_id}",
+                        "text": f"*Entity ID:*\n{entity_id}",
                     },
                     {
                         "type": "mrkdwn",
-                        "text": f"*Entity ID:*\n{entity_id}",
+                        "text": f"*File Type ID:*\n{file_type_id}",
                     },
                 ],
             })
@@ -228,16 +251,21 @@ class SlackService:
         findings = scenario_b.get("findings", [])[:10]  # Limit to 10 for display
 
         for finding in findings:
-            mis_record_id = finding.get("mis_record_id", "N/A")
+            entity_id = finding.get("entity_id", "N/A")
             txn_date = finding.get("transaction_date", "N/A")
-            suggestion = finding.get("suggestion", "")
+            issue = finding.get("issue", "N/A")
+            suggestion = finding.get("suggestion", "No suggestion provided")
 
             blocks.append({
                 "type": "section",
                 "fields": [
                     {
                         "type": "mrkdwn",
-                        "text": f"*MIS Record ID:*\n{mis_record_id}",
+                        "text": f"*Entity ID:*\n{entity_id}",
+                    },
+                    {
+                        "type": "mrkdwn",
+                        "text": f"*Issue:*\n{issue}",
                     },
                     {
                         "type": "mrkdwn",
@@ -283,16 +311,18 @@ class SlackService:
         findings = scenario_c.get("findings", [])[:10]  # Limit to 10 for display
 
         for finding in findings:
-            record_id = finding.get("record_id", "N/A")
+            entity_id = finding.get("entity_id", "N/A")
             rule_id = finding.get("failed_rule_id", "N/A")
+            rule_expression = finding.get("failed_rule_expression", "N/A")
             art_remarks = finding.get("suggested_art_remarks", "")
+            mismatch_details = finding.get("mismatch_details", {})
 
             blocks.append({
                 "type": "section",
                 "fields": [
                     {
                         "type": "mrkdwn",
-                        "text": f"*Record ID:*\n{record_id}",
+                        "text": f"*Entity ID:*\n{entity_id}",
                     },
                     {
                         "type": "mrkdwn",
@@ -301,13 +331,24 @@ class SlackService:
                 ],
             })
 
-            blocks.append({
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": f"*Suggested ART Remarks:* {art_remarks}",
-                },
-            })
+            if mismatch_details:
+                mismatch_text = "\n".join([f"• {k}: {v}" for k, v in mismatch_details.items()])
+                blocks.append({
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": f"*Mismatch Details:*\n{mismatch_text}",
+                    },
+                })
+
+            if art_remarks:
+                blocks.append({
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": f"*Suggested ART Remarks:* {art_remarks}",
+                    },
+                })
 
         if len(scenario_c.get("findings", [])) > 10:
             blocks.append({

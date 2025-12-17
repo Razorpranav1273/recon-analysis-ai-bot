@@ -1,0 +1,1343 @@
+workspace:{
+    "email_cut_off_time": null,
+    "automatic_fetching": true,
+    "name": "NETBANKING_AUSF",
+    "job_dependency_lock": 0,
+    "entity": "workspace",
+    "migrated_to_hudi": true,
+    "workspace_metadata": {
+        "recon_deadline": 10,
+        "unreconciled_enrichment": [
+            {
+                "config": {
+                    "NuSSCThn8s0E05": {
+                        "filter_conditions": "na"
+                    },
+                    "NuSSCivzNm01QX": {
+                        "matching_src": {
+                            "query_config": [
+                                {
+                                    "query": "select original_row_hash, transaction_date from realtime_prod_recon.record where (rzp_entity_id) in ( #in_params# ) and source_id = 'NuSSCThn8s0E05' and created_date > cast(date(date_add(CURRENT_TIMESTAMP, -250)) as string) and created_date <= cast(date(date_add(CURRENT_TIMESTAMP, 0)) as string)",
+                                    "filter_columns": [
+                                        "##extracted_payment_id##"
+                                    ]
+                                }
+                            ]
+                        },
+                        "filter_conditions": "(recon_status=='Unreconciled' or recon_status is NULL) and (art_remarks is NULL or length(art_remarks) == 0)"
+                    }
+                },
+                "enable_upsert": true,
+                "configured_recon_pair": [
+                    "NuSSCivzNm01QX",
+                    "NuSSCThn8s0E05"
+                ]
+            },
+            {
+                "config": {
+                    "NuSSCThn8s0E05": {
+                        "filter_conditions": "na"
+                    },
+                    "OAtoKmuFPR01GC": {
+                        "matching_src": {
+                            "query_config": [
+                                {
+                                    "query": "select original_row_hash, transaction_date from realtime_prod_recon.record where (rzp_entity_id) in ( #in_params# ) and source_id = 'NuSSCThn8s0E05' and created_date > cast(date(date_add(CURRENT_TIMESTAMP, -250)) as string) and created_date <= cast(date(date_add(CURRENT_TIMESTAMP, 0)) as string)",
+                                    "filter_columns": [
+                                        "##extracted_payment_id##"
+                                    ]
+                                }
+                            ]
+                        },
+                        "filter_conditions": "(recon_status=='Unreconciled' or recon_status is NULL) and (art_remarks is NULL or length(art_remarks) == 0)"
+                    }
+                },
+                "enable_upsert": true,
+                "configured_recon_pair": [
+                    "OAtoKmuFPR01GC",
+                    "NuSSCThn8s0E05"
+                ]
+            },
+            {
+                "config": {
+                    "NuSSCThn8s0E05": {
+                        "filter_conditions": "na"
+                    },
+                    "O1Y4BLW5oe08I3": {
+                        "matching_src": {
+                            "query_config": [
+                                {
+                                    "query": "select original_row_hash, transaction_date from realtime_prod_recon.record where (rzp_entity_id) in ( #in_params# ) and source_id = 'NuSSCThn8s0E05' and created_date > cast(date(date_add(CURRENT_TIMESTAMP, -250)) as string) and created_date <= cast(date(date_add(CURRENT_TIMESTAMP, 0)) as string)",
+                                    "filter_columns": [
+                                        "##extracted_payment_id##"
+                                    ]
+                                }
+                            ]
+                        },
+                        "filter_conditions": "(recon_status=='Unreconciled' or recon_status is NULL) and (art_remarks is NULL or length(art_remarks) == 0)"
+                    }
+                },
+                "enable_upsert": true,
+                "configured_recon_pair": [
+                    "O1Y4BLW5oe08I3",
+                    "NuSSCThn8s0E05"
+                ]
+            },
+            {
+                "config": {
+                    "NuSSCivzNm01QX": {
+                        "matching_src": {
+                            "query_config": [
+                                {
+                                    "query": "select original_row_hash, transaction_date from realtime_prod_recon.record where (rzp_entity_id) in ( #in_params# ) and source_id = 'NurQWWwP8j0By7' and created_date > cast(date(date_add(CURRENT_TIMESTAMP, -250)) as string) and created_date <= cast(date(date_add(CURRENT_TIMESTAMP, 0)) as string)",
+                                    "filter_columns": [
+                                        "##extracted_payment_id##"
+                                    ]
+                                }
+                            ]
+                        },
+                        "filter_conditions": "(recon_status=='Unreconciled' or recon_status is NULL) and (art_remarks is NULL or length(art_remarks) == 0)"
+                    },
+                    "NurQWWwP8j0By7": {
+                        "filter_conditions": "na"
+                    }
+                },
+                "enable_upsert": true,
+                "configured_recon_pair": [
+                    "NuSSCivzNm01QX",
+                    "NurQWWwP8j0By7"
+                ]
+            },
+            {
+                "config": {
+                    "NurQWWwP8j0By7": {
+                        "filter_conditions": "na"
+                    },
+                    "OAtoKmuFPR01GC": {
+                        "matching_src": {
+                            "query_config": [
+                                {
+                                    "query": "select original_row_hash, transaction_date from realtime_prod_recon.record where (rzp_entity_id) in ( #in_params# ) and source_id = 'NurQWWwP8j0By7' and created_date > cast(date(date_add(CURRENT_TIMESTAMP, -250)) as string) and created_date <= cast(date(date_add(CURRENT_TIMESTAMP, 0)) as string)",
+                                    "filter_columns": [
+                                        "##extracted_payment_id##"
+                                    ]
+                                }
+                            ]
+                        },
+                        "filter_conditions": "(recon_status=='Unreconciled' or recon_status is NULL) and (art_remarks is NULL or length(art_remarks) == 0)"
+                    }
+                },
+                "enable_upsert": true,
+                "configured_recon_pair": [
+                    "OAtoKmuFPR01GC",
+                    "NurQWWwP8j0By7"
+                ]
+            },
+            {
+                "config": {
+                    "NurQWWwP8j0By7": {
+                        "filter_conditions": "na"
+                    },
+                    "O1Y4BLW5oe08I3": {
+                        "matching_src": {
+                            "query_config": [
+                                {
+                                    "query": "select original_row_hash, transaction_date from realtime_prod_recon.record where (rzp_entity_id) in ( #in_params# ) and source_id = 'NurQWWwP8j0By7' and created_date > cast(date(date_add(CURRENT_TIMESTAMP, -250)) as string) and created_date <= cast(date(date_add(CURRENT_TIMESTAMP, 0)) as string)",
+                                    "filter_columns": [
+                                        "##extracted_payment_id##"
+                                    ]
+                                }
+                            ]
+                        },
+                        "filter_conditions": "(recon_status=='Unreconciled' or recon_status is NULL) and (art_remarks is NULL or length(art_remarks) == 0)"
+                    }
+                },
+                "enable_upsert": true,
+                "configured_recon_pair": [
+                    "O1Y4BLW5oe08I3",
+                    "NurQWWwP8j0By7"
+                ]
+            },
+            {
+                "config": {
+                    "NuSSCThn8s0E05": {
+                        "filter_conditions": "na"
+                    },
+                    "NuSSCivzNm01QX": {
+                        "external_src": {
+                            "query_config": [
+                                {
+                                    "query": "select id as payment_id, status from realtime_hudi_api.payments where id in ( #in_params# ) and created_date > cast(date(date_add(CURRENT_TIMESTAMP, -60)) as string)",
+                                    "filter_columns": [
+                                        "##extracted_payment_id##"
+                                    ]
+                                }
+                            ]
+                        },
+                        "matching_src": {
+                            "query_config": [
+                                {
+                                    "query": "select original_row_hash, transaction_date  from realtime_prod_recon.record where (rzp_entity_id) in ( #in_params# ) and source_id = 'NuSSCThn8s0E05' and created_date > cast(date(date_add(CURRENT_TIMESTAMP, -120)) as string) ",
+                                    "filter_columns": [
+                                        "##extracted_payment_id##"
+                                    ]
+                                }
+                            ]
+                        },
+                        "filter_conditions": "recon_status=='Unreconciled' and art_remarks in ('PaymentStatusCreated', 'PaymentInCreatedState', 'Payment in Created State') and length(extracted_payment_id)==14"
+                    }
+                },
+                "enable_upsert": true,
+                "configured_recon_pair": [
+                    "NuSSCivzNm01QX",
+                    "NuSSCThn8s0E05"
+                ]
+            }
+        ],
+        "recon_output_email_types": [
+            "file_based"
+        ],
+        "recon_s3_logging_enabled": true
+    },
+    "id": "NuSS853m4g0FSz",
+    "merchant_id": "1000PGRazorpay",
+    "reporting_emails": [
+        "umar.khan@razorpay.com",
+        "platform-recon@razorpay.com",
+        "ARTOutput-Finops@razorpay.com"
+    ]
+}
+
+file_types:
+[
+    {
+        "recon_pivot_metadata": {
+            "type": "transaction",
+            "column": "date",
+            "format": "%Y-%m-%d"
+        },
+        "validators": "[]",
+        "schema": {
+            "name": "rzp_payment_report",
+            "type": "record",
+            "fields": [
+                {
+                    "name": "pay_id",
+                    "type": "string"
+                },
+                {
+                    "name": "bank_ref",
+                    "type": "string"
+                },
+                {
+                    "name": "amount",
+                    "type": "string"
+                },
+                {
+                    "name": "status",
+                    "type": "string"
+                },
+                {
+                    "name": "date",
+                    "type": "string"
+                },
+                {
+                    "name": "method",
+                    "type": "string"
+                },
+                {
+                    "name": "settled_by",
+                    "type": "string"
+                }
+            ],
+            "namespace": "recon"
+        },
+        "file_metadata": [
+            {
+                "name": "is_header_present",
+                "value": true
+            },
+            {
+                "name": "include_columns",
+                "value": [
+                    "pay_id"
+                ]
+            },
+            {
+                "name": "unique_column",
+                "value": "pay_id"
+            },
+            {
+                "name": "mode_column",
+                "value": "pay_id"
+            },
+            {
+                "name": "hudi_record_key",
+                "value": "pay_id,date"
+            },
+            {
+                "name": "group_by_columns",
+                "value": [
+                    "pay_id"
+                ]
+            },
+            {
+                "name": "upsert_meta",
+                "value": {
+                    "columns_to_update": [
+                        "file_detail_id",
+                        "status"
+                    ],
+                    "unique_key_column": "row_hash"
+                }
+            },
+            {
+                "name": "datastore_meta",
+                "value": {
+                    "pii_columns": [],
+                    "rzp_entity_type": "payment",
+                    "narration_column": null,
+                    "record_status_column": null,
+                    "rzp_entity_id_column": "pay_id",
+                    "transaction_type_column": null,
+                    "channel_identifier_column": "pay_id"
+                }
+            },
+            {
+                "name": "global_filterable_columns_dashboard",
+                "value": [
+                    {
+                        "file_col": "pay_id",
+                        "display_col": "payment_id"
+                    }
+                ]
+            },
+            {
+                "name": "source_filterable_columns_dashboard",
+                "value": [
+                    {
+                        "file_col": "status",
+                        "display_col": "internal_payment_status"
+                    }
+                ]
+            }
+        ],
+        "transformations": [
+            {
+                "logic": {
+                    "abs": [
+                        {
+                            "float": [
+                                {
+                                    "strip": [
+                                        "$amount"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "output_columns": [
+                    "abs_amount"
+                ]
+            }
+        ],
+        "name": "rzp_payment_report",
+        "source_id": "NuSS87MBhU08J0",
+        "entity": "file_type",
+        "workspace_id": "NuSS853m4g0FSz",
+        "source_category": "Internal Statement",
+        "merchant_id": "1000PGRazorpay",
+        "id": "NuSSCThn8s0E05"
+    },
+    {
+        "recon_pivot_metadata": {
+            "type": "transaction",
+            "column": "reversal_date",
+            "format": "%Y-%m-%d"
+        },
+        "validators": "[]",
+        "schema": {
+            "name": "rzp_refund_report",
+            "type": "record",
+            "fields": [
+                {
+                    "name": "prn",
+                    "type": "string"
+                },
+                {
+                    "name": "txn_amount",
+                    "type": "string"
+                },
+                {
+                    "name": "reversal_amount",
+                    "type": "string"
+                },
+                {
+                    "name": "reversal_date",
+                    "type": "string"
+                },
+                {
+                    "name": "reversalid",
+                    "type": "string"
+                },
+                {
+                    "name": "status",
+                    "type": "string"
+                }
+            ],
+            "namespace": "recon"
+        },
+        "file_metadata": [
+            {
+                "name": "is_header_present",
+                "value": true
+            },
+            {
+                "name": "include_columns",
+                "value": [
+                    "prn"
+                ]
+            },
+            {
+                "name": "unique_column",
+                "value": "prn"
+            },
+            {
+                "name": "mode_column",
+                "value": "prn"
+            },
+            {
+                "name": "hudi_record_key",
+                "value": "prn,reversalid"
+            },
+            {
+                "name": "group_by_columns",
+                "value": [
+                    "prn"
+                ]
+            },
+            {
+                "name": "upsert_meta",
+                "value": {
+                    "columns_to_update": [
+                        "file_detail_id",
+                        "status"
+                    ],
+                    "unique_key_column": "row_hash"
+                }
+            },
+            {
+                "name": "dual_write_data_config",
+                "value": {
+                    "batch_size": 10,
+                    "data_layout": {
+                        "amount": "mpayment_amt",
+                        "row_hash": "row_hash",
+                        "txn_date": "txn_date",
+                        "record_id": "record_id",
+                        "netbanking": {
+                            "additional_data": {
+                                "customer_id": null,
+                                "credit_account_number": null
+                            },
+                            "bank_account_number": null,
+                            "bank_transaction_id": "mhost_ref_no",
+                            "gateway_transaction_id": null
+                        },
+                        "payment_id": "extracted_payment_id",
+                        "art_remarks": "art_remarks",
+                        "merchant_id": "merchant_id",
+                        "file_type_id": "file_type_id",
+                        "ordering_key": "extracted_payment_id",
+                        "recon_status": "recon_status",
+                        "workspace_id": "workspace_id",
+                        "reconciled_at": "recon_at",
+                        "workspace_name": "workspace_name",
+                        "rzp_payment_method": "netbanking",
+                        "bank_account_number": null,
+                        "bank_transaction_id": "mhost_ref_no",
+                        "gateway_merchant_id": null,
+                        "gateway_transaction_id": null,
+                        "last_recon_run_for_record": null
+                    },
+                    "last_recon_trigger": false,
+                    "is_dual_write_enabled_reconciled_records": false
+                }
+            },
+            {
+                "name": "datastore_meta",
+                "value": {
+                    "pii_columns": [],
+                    "rzp_entity_type": "refund",
+                    "narration_column": null,
+                    "record_status_column": null,
+                    "rzp_entity_id_column": "prn",
+                    "transaction_type_column": null,
+                    "channel_identifier_column": "prn"
+                }
+            },
+            {
+                "name": "global_filterable_columns_dashboard",
+                "value": [
+                    {
+                        "file_col": "prn",
+                        "display_col": "refund_id"
+                    }
+                ]
+            },
+            {
+                "name": "source_filterable_columns_dashboard",
+                "value": [
+                    {
+                        "file_col": "status",
+                        "display_col": "internal_refund_status"
+                    }
+                ]
+            }
+        ],
+        "transformations": [
+            {
+                "logic": {
+                    "abs": [
+                        {
+                            "float": [
+                                {
+                                    "strip": [
+                                        "$reversal_amount"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "output_columns": [
+                    "abs_amount"
+                ]
+            }
+        ],
+        "name": "rzp_refund_report",
+        "source_id": "NuSS87MBhU08J0",
+        "entity": "file_type",
+        "workspace_id": "NuSS853m4g0FSz",
+        "source_category": "Internal Statement",
+        "merchant_id": "1000PGRazorpay",
+        "id": "NurQWWwP8j0By7"
+    },
+    {
+        "recon_pivot_metadata": {
+            "type": "transaction",
+            "column": "mpayment_date",
+            "format": "%Y-%m-%d %H:%M:%S.%f"
+        },
+        "validators": "[]",
+        "schema": {
+            "name": "bank_payment_report",
+            "type": "record",
+            "fields": [
+                {
+                    "name": "mtransaction_type",
+                    "type": "string"
+                },
+                {
+                    "name": "mchannel_ref_no",
+                    "type": "string"
+                },
+                {
+                    "name": "mpayment_id_ext",
+                    "type": "string"
+                },
+                {
+                    "name": "mmerchant_id",
+                    "type": "string"
+                },
+                {
+                    "name": "muserreferenceno",
+                    "type": "string"
+                },
+                {
+                    "name": "mhost_ref_no",
+                    "type": "string"
+                },
+                {
+                    "name": "mexternalreferenceid_ext",
+                    "type": "string"
+                },
+                {
+                    "name": "mpayment_date",
+                    "type": "string"
+                },
+                {
+                    "name": "mpayment_amt",
+                    "type": "string"
+                },
+                {
+                    "name": "mrefund_amount",
+                    "type": "string"
+                },
+                {
+                    "name": "mdebit_account_no",
+                    "type": "string"
+                },
+                {
+                    "name": "mstatus",
+                    "type": "string"
+                },
+                {
+                    "name": "mmerchant_acct_no",
+                    "type": "string"
+                },
+                {
+                    "name": "mmerchant_url",
+                    "type": "string"
+                }
+            ],
+            "namespace": "recon"
+        },
+        "file_metadata": [
+            {
+                "name": "is_header_present",
+                "value": true
+            },
+            {
+                "name": "include_columns",
+                "value": [
+                    "extracted_payment_id"
+                ]
+            },
+            {
+                "name": "unique_column",
+                "value": "extracted_payment_id"
+            },
+            {
+                "name": "mode_column",
+                "value": "mstatus"
+            },
+            {
+                "name": "hudi_record_key",
+                "value": "extracted_payment_id,mpayment_date"
+            },
+            {
+                "name": "group_by_columns",
+                "value": [
+                    "extracted_payment_id"
+                ]
+            },
+            {
+                "name": "upsert_meta",
+                "value": {
+                    "columns_to_update": [
+                        "file_detail_id"
+                    ],
+                    "unique_key_column": "row_hash"
+                }
+            },
+            {
+                "name": "dual_write_data_config",
+                "value": {
+                    "batch_size": 10,
+                    "data_layout": {
+                        "amount": "mpayment_amt",
+                        "row_hash": "row_hash",
+                        "txn_date": "txn_date",
+                        "record_id": "record_id",
+                        "netbanking": {
+                            "additional_data": {
+                                "customer_id": null,
+                                "credit_account_number": null
+                            },
+                            "bank_account_number": null,
+                            "bank_transaction_id": "mhost_ref_no",
+                            "gateway_transaction_id": null
+                        },
+                        "payment_id": "extracted_payment_id",
+                        "art_remarks": "art_remarks",
+                        "merchant_id": "merchant_id",
+                        "file_type_id": "file_type_id",
+                        "ordering_key": "extracted_payment_id",
+                        "recon_status": "recon_status",
+                        "workspace_id": "workspace_id",
+                        "reconciled_at": "recon_at",
+                        "workspace_name": "workspace_name",
+                        "rzp_payment_method": "netbanking",
+                        "bank_account_number": null,
+                        "bank_transaction_id": "mhost_ref_no",
+                        "gateway_merchant_id": null,
+                        "gateway_transaction_id": null
+                    },
+                    "last_recon_trigger": false,
+                    "is_dual_write_enabled_reconciled_records": true
+                }
+            },
+            {
+                "name": "datastore_meta",
+                "value": {
+                    "pii_columns": [],
+                    "rzp_entity_type": "payment",
+                    "narration_column": null,
+                    "record_status_column": null,
+                    "rzp_entity_id_column": "extracted_payment_id",
+                    "transaction_type_column": null,
+                    "channel_identifier_column": "extracted_payment_id"
+                }
+            },
+            {
+                "name": "file_based_email_enabled",
+                "value": true
+            },
+            {
+                "name": "file_based_email_schedule_interval_in_sec",
+                "value": 10800
+            },
+            {
+                "name": "refund_identifier",
+                "value": {
+                    "mtransaction_type": "REFUND"
+                }
+            },
+            {
+                "name": "is_ingestion_upsert_enabled",
+                "value": true
+            },
+            {
+                "name": "sqs_data_config",
+                "value": {
+                    "batch_size": 50,
+                    "data_layout": {
+                        "mode": "live",
+                        "source": "ART",
+                        "gateway": "netbanking_ausf",
+                        "refunds": {
+                            "arn": null,
+                            "status": "processed",
+                            "refund_id": "mpayment_id_ext",
+                            "payment_id": "extracted_payment_id",
+                            "gateway_keys": [],
+                            "reconciled_at": "recon_at",
+                            "gateway_settled_at": null
+                        },
+                        "art_request_id": "",
+                        "should_force_update_arn": false
+                    },
+                    "dual_write_recon_states": [
+                        "Reconciled",
+                        "Refund_Failed"
+                    ]
+                }
+            },
+            {
+                "name": "schedule_ingestion",
+                "value": true
+            },
+            {
+                "name": "global_filterable_columns_dashboard",
+                "value": [
+                    {
+                        "file_col": "mpayment_id_ext",
+                        "display_col": "refund_id"
+                    },
+                    {
+                        "file_col": "extracted_payment_id",
+                        "display_col": "payment_id"
+                    }
+                ]
+            },
+            {
+                "name": "source_filterable_columns_dashboard",
+                "value": [
+                    {
+                        "file_col": "mexternalreferenceid_ext",
+                        "display_col": "bank_txn_ref"
+                    },
+                    {
+                        "values": [
+                            "REFUND",
+                            "PAYMENT"
+                        ],
+                        "file_col": "mtransaction_type",
+                        "display_col": "transaction_type"
+                    },
+                    {
+                        "values": [
+                            "S"
+                        ],
+                        "file_col": "mstatus",
+                        "display_col": "transaction_status"
+                    }
+                ]
+            },
+            {
+                "name": "record_duplicate_records",
+                "value": true
+            }
+        ],
+        "transformations": [
+            {
+                "logic": {
+                    "remove_apostrophe": [
+                        "$muserreferenceno"
+                    ]
+                },
+                "output_columns": [
+                    "extracted_payment_id"
+                ]
+            },
+            {
+                "logic": {
+                    "get_amount_for_netbanking_ausf": [
+                        "$mtransaction_type",
+                        "$mpayment_amt",
+                        "$mrefund_amount"
+                    ]
+                },
+                "output_columns": [
+                    "abs_amount"
+                ]
+            }
+        ],
+        "name": "bank_payment_report",
+        "source_id": "NuSS87MBhU08J0",
+        "entity": "file_type",
+        "workspace_id": "NuSS853m4g0FSz",
+        "source_category": "Bank Statement",
+        "merchant_id": "1000PGRazorpay",
+        "id": "NuSSCivzNm01QX"
+    },
+    {
+        "recon_pivot_metadata": {
+            "type": "transaction",
+            "column": "payment_date",
+            "format": "%d-%m-%Y %H:%M:%S"
+        },
+        "validators": "[]",
+        "schema": {
+            "name": "bank_payment_corp_report",
+            "type": "record",
+            "fields": [
+                {
+                    "name": "transaction_type",
+                    "type": "string"
+                },
+                {
+                    "name": "channel_ref_no",
+                    "type": "string"
+                },
+                {
+                    "name": "payment_id_ext",
+                    "type": "string"
+                },
+                {
+                    "name": "merchant_id",
+                    "type": "string"
+                },
+                {
+                    "name": "userreferenceno",
+                    "type": "string"
+                },
+                {
+                    "name": "host_ref_no",
+                    "type": "string"
+                },
+                {
+                    "name": "externalreferenceid_ext",
+                    "type": "string"
+                },
+                {
+                    "name": "payment_date",
+                    "type": "string"
+                },
+                {
+                    "name": "payment_amt",
+                    "type": "string"
+                },
+                {
+                    "name": "refund_amount",
+                    "type": "string"
+                },
+                {
+                    "name": "debit_account_no",
+                    "type": "string"
+                },
+                {
+                    "name": "status",
+                    "type": "string"
+                },
+                {
+                    "name": "merchant_acct_no",
+                    "type": "string"
+                },
+                {
+                    "name": "merchant_url",
+                    "type": "string"
+                }
+            ],
+            "namespace": "recon"
+        },
+        "file_metadata": [
+            {
+                "name": "is_header_present",
+                "value": true
+            },
+            {
+                "name": "include_columns",
+                "value": [
+                    "extracted_payment_id"
+                ]
+            },
+            {
+                "name": "unique_column",
+                "value": "extracted_payment_id"
+            },
+            {
+                "name": "mode_column",
+                "value": "transaction_type"
+            },
+            {
+                "name": "hudi_record_key",
+                "value": "extracted_payment_id,payment_date"
+            },
+            {
+                "name": "group_by_columns",
+                "value": [
+                    "extracted_payment_id"
+                ]
+            },
+            {
+                "name": "is_ingestion_upsert_enabled",
+                "value": true
+            },
+            {
+                "name": "upsert_meta",
+                "value": {
+                    "columns_to_update": [
+                        "file_detail_id"
+                    ],
+                    "unique_key_column": "row_hash"
+                }
+            },
+            {
+                "name": "dual_write_data_config",
+                "value": {
+                    "batch_size": 10,
+                    "data_layout": {
+                        "amount": "payment_amt",
+                        "row_hash": "row_hash",
+                        "txn_date": "txn_date",
+                        "record_id": "record_id",
+                        "netbanking": {
+                            "additional_data": {
+                                "customer_id": null,
+                                "credit_account_number": null
+                            },
+                            "bank_account_number": null,
+                            "bank_transaction_id": "host_ref_no",
+                            "gateway_transaction_id": null
+                        },
+                        "payment_id": "extracted_payment_id",
+                        "art_remarks": "art_remarks",
+                        "merchant_id": "merchant_id",
+                        "file_type_id": "file_type_id",
+                        "ordering_key": "extracted_payment_id",
+                        "recon_status": "recon_status",
+                        "workspace_id": "workspace_id",
+                        "reconciled_at": "recon_at",
+                        "workspace_name": "workspace_name",
+                        "rzp_payment_method": "netbanking",
+                        "bank_account_number": null,
+                        "bank_transaction_id": "host_ref_no",
+                        "gateway_merchant_id": null,
+                        "gateway_transaction_id": null
+                    },
+                    "last_recon_trigger": false,
+                    "is_dual_write_enabled_reconciled_records": true
+                }
+            },
+            {
+                "name": "file_based_email_enabled",
+                "value": true
+            },
+            {
+                "name": "datastore_meta",
+                "value": {
+                    "pii_columns": [],
+                    "rzp_entity_type": "payment",
+                    "narration_column": null,
+                    "record_status_column": null,
+                    "rzp_entity_id_column": "extracted_payment_id",
+                    "transaction_type_column": null,
+                    "channel_identifier_column": "extracted_payment_id"
+                }
+            },
+            {
+                "name": "file_based_email_schedule_interval_in_sec",
+                "value": 7200
+            },
+            {
+                "name": "schedule_ingestion",
+                "value": true
+            },
+            {
+                "name": "global_filterable_columns_dashboard",
+                "value": [
+                    {
+                        "file_col": "extracted_payment_id",
+                        "display_col": "refund_id"
+                    },
+                    {
+                        "file_col": "extracted_payment_id",
+                        "display_col": "payment_id"
+                    }
+                ]
+            },
+            {
+                "name": "source_filterable_columns_dashboard",
+                "value": [
+                    {
+                        "file_col": "externalreferenceid_ext",
+                        "display_col": "bank_txn_ref"
+                    },
+                    {
+                        "values": [
+                            "PAYMENT",
+                            "REFUND"
+                        ],
+                        "file_col": "transaction_type",
+                        "display_col": "transaction_type"
+                    },
+                    {
+                        "values": [
+                            "PAID",
+                            "FAILED"
+                        ],
+                        "file_col": "status",
+                        "display_col": "transaction_status"
+                    }
+                ]
+            },
+            {
+                "name": "record_duplicate_records",
+                "value": true
+            }
+        ],
+        "transformations": [
+            {
+                "logic": {
+                    "get_amount_for_netbanking_ausf": [
+                        "$transaction_type",
+                        "$payment_amt",
+                        "$refund_amount"
+                    ]
+                },
+                "output_columns": [
+                    "abs_amount"
+                ]
+            },
+            {
+                "logic": {
+                    "remove_apostrophe": [
+                        "$userreferenceno"
+                    ]
+                },
+                "output_columns": [
+                    "extracted_payment_id"
+                ]
+            }
+        ],
+        "name": "bank_payment_corp_report",
+        "source_id": "NuSS87MBhU08J0",
+        "entity": "file_type",
+        "workspace_id": "NuSS853m4g0FSz",
+        "source_category": "",
+        "merchant_id": "1000PGRazorpay",
+        "id": "O1Y4BLW5oe08I3"
+    },
+    {
+        "recon_pivot_metadata": {
+            "type": "transaction",
+            "column": "payment_date",
+            "format": "%Y-%m-%d %H:%M:%S.%f"
+        },
+        "validators": "[]",
+        "schema": {
+            "name": "bank_payment_report_non_TPV",
+            "type": "record",
+            "fields": [
+                {
+                    "name": "transaction_type",
+                    "type": "string"
+                },
+                {
+                    "name": "channel_ref_no",
+                    "type": "string"
+                },
+                {
+                    "name": "payment_id_ext",
+                    "type": "string"
+                },
+                {
+                    "name": "merchant_id",
+                    "type": "string"
+                },
+                {
+                    "name": "userreferenceno",
+                    "type": "string"
+                },
+                {
+                    "name": "host_ref_no",
+                    "type": "string"
+                },
+                {
+                    "name": "externalreferenceid_ext",
+                    "type": "string"
+                },
+                {
+                    "name": "payment_date",
+                    "type": "string"
+                },
+                {
+                    "name": "payment_amt",
+                    "type": "string"
+                },
+                {
+                    "name": "refund_amount",
+                    "type": "string"
+                },
+                {
+                    "name": "debit_account_no",
+                    "type": "string"
+                },
+                {
+                    "name": "status",
+                    "type": "string"
+                },
+                {
+                    "name": "merchant_acct_no",
+                    "type": "string"
+                },
+                {
+                    "name": "merchant_url",
+                    "type": "string"
+                }
+            ],
+            "namespace": "recon"
+        },
+        "file_metadata": [
+            {
+                "name": "is_header_present",
+                "value": true
+            },
+            {
+                "name": "count_top_rows_skip",
+                "value": "0"
+            },
+            {
+                "name": "count_bottom_rows_skip",
+                "value": "0"
+            },
+            {
+                "name": "include_columns",
+                "value": [
+                    "extracted_payment_id"
+                ]
+            },
+            {
+                "name": "unique_column",
+                "value": "extracted_payment_id"
+            },
+            {
+                "name": "mode_column",
+                "value": "status"
+            },
+            {
+                "name": "hudi_record_key",
+                "value": "userreferenceno,payment_date"
+            },
+            {
+                "name": "group_by_columns",
+                "value": [
+                    "userreferenceno"
+                ]
+            },
+            {
+                "name": "upsert_meta",
+                "value": {
+                    "columns_to_update": [
+                        "file_detail_id"
+                    ],
+                    "unique_key_column": "row_hash"
+                }
+            },
+            {
+                "name": "dual_write_data_config",
+                "value": {
+                    "batch_size": 10,
+                    "data_layout": {
+                        "amount": "payment_amt",
+                        "row_hash": "row_hash",
+                        "txn_date": "txn_date",
+                        "record_id": "record_id",
+                        "netbanking": {
+                            "additional_data": {
+                                "customer_id": null,
+                                "credit_account_number": null
+                            },
+                            "bank_account_number": null,
+                            "bank_transaction_id": "host_ref_no",
+                            "gateway_transaction_id": null
+                        },
+                        "payment_id": "extracted_payment_id",
+                        "art_remarks": "art_remarks",
+                        "merchant_id": "merchant_id",
+                        "file_type_id": "file_type_id",
+                        "ordering_key": "extracted_payment_id",
+                        "recon_status": "recon_status",
+                        "workspace_id": "workspace_id",
+                        "reconciled_at": "recon_at",
+                        "workspace_name": "workspace_name",
+                        "rzp_payment_method": "netbanking",
+                        "bank_account_number": null,
+                        "bank_transaction_id": "host_ref_no",
+                        "gateway_merchant_id": null,
+                        "gateway_transaction_id": null
+                    },
+                    "last_recon_trigger": false,
+                    "is_dual_write_enabled_reconciled_records": true
+                }
+            },
+            {
+                "name": "datastore_meta",
+                "value": {
+                    "pii_columns": [],
+                    "rzp_entity_type": "payment",
+                    "narration_column": null,
+                    "record_status_column": null,
+                    "rzp_entity_id_column": "extracted_payment_id",
+                    "transaction_type_column": null,
+                    "channel_identifier_column": "extracted_payment_id"
+                }
+            },
+            {
+                "name": "is_ingestion_upsert_enabled",
+                "value": true
+            },
+            {
+                "name": "file_based_email_enabled",
+                "value": true
+            },
+            {
+                "name": "refund_identifier",
+                "value": {
+                    "transaction_type": "REFUND"
+                }
+            },
+            {
+                "name": "sqs_data_config",
+                "value": {
+                    "batch_size": 50,
+                    "data_layout": {
+                        "mode": "live",
+                        "source": "ART",
+                        "gateway": "netbanking_ausf",
+                        "refunds": {
+                            "arn": null,
+                            "status": "processed",
+                            "refund_id": "payment_id_ext",
+                            "payment_id": "extracted_payment_id",
+                            "gateway_keys": [],
+                            "reconciled_at": "recon_at",
+                            "gateway_settled_at": null
+                        },
+                        "art_request_id": "",
+                        "should_force_update_arn": false
+                    },
+                    "dual_write_recon_states": [
+                        "Reconciled",
+                        "Refund_Failed"
+                    ]
+                }
+            },
+            {
+                "name": "file_based_email_schedule_interval_in_sec",
+                "value": 10800
+            },
+            {
+                "name": "schedule_ingestion",
+                "value": true
+            },
+            {
+                "name": "global_filterable_columns_dashboard",
+                "value": [
+                    {
+                        "file_col": "payment_id_ext",
+                        "display_col": "refund_id"
+                    },
+                    {
+                        "file_col": "extracted_payment_id",
+                        "display_col": "payment_id"
+                    }
+                ]
+            },
+            {
+                "name": "source_filterable_columns_dashboard",
+                "value": [
+                    {
+                        "file_col": "externalreferenceid_ext",
+                        "display_col": "bank_txn_ref"
+                    },
+                    {
+                        "values": [
+                            "PAYMENT",
+                            "REFUND"
+                        ],
+                        "file_col": "transaction_type",
+                        "display_col": "transaction_type"
+                    },
+                    {
+                        "values": [
+                            "S"
+                        ],
+                        "file_col": "status",
+                        "display_col": "transaction_status"
+                    }
+                ]
+            },
+            {
+                "name": "record_duplicate_records",
+                "value": true
+            }
+        ],
+        "transformations": [
+            {
+                "logic": {
+                    "remove_apostrophe": [
+                        "$userreferenceno"
+                    ]
+                },
+                "output_columns": [
+                    "extracted_payment_id"
+                ]
+            },
+            {
+                "logic": {
+                    "get_amount_for_netbanking_ausf": [
+                        "$transaction_type",
+                        "$payment_amt",
+                        "$refund_amount"
+                    ]
+                },
+                "output_columns": [
+                    "abs_amount"
+                ]
+            }
+        ],
+        "name": "bank_payment_report_non_TPV",
+        "source_id": "NuSS87MBhU08J0",
+        "entity": "file_type",
+        "workspace_id": "NuSS853m4g0FSz",
+        "source_category": "",
+        "merchant_id": "1000PGRazorpay",
+        "id": "OAtoKmuFPR01GC"
+    }
+]
+
+

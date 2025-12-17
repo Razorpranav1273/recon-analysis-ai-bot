@@ -8,9 +8,7 @@ from typing import Dict, Any, Optional, Tuple
 from datetime import datetime
 from src.services.recon_client import ReconClient
 from src.analysis.report_parser import ReportParser
-from src.analysis.recon_status_analyzer import ReconStatusAnalyzer
-from src.analysis.gap_analyzer import GapAnalyzer
-from src.analysis.rule_analyzer import RuleAnalyzer
+from src.analysis.unified_analyzer import UnifiedAnalyzer
 from src.services.slack_service import SlackService
 from src.utils.logging import logger
 
@@ -24,9 +22,7 @@ class CommandHandler:
         """Initialize command handler."""
         self.recon_client = ReconClient()
         self.report_parser = ReportParser()
-        self.recon_status_analyzer = ReconStatusAnalyzer()
-        self.gap_analyzer = GapAnalyzer()
-        self.rule_analyzer = RuleAnalyzer()
+        self.unified_analyzer = UnifiedAnalyzer()
         self.slack_service = SlackService()
 
     def handle_recon_analyze(
@@ -36,7 +32,7 @@ class CommandHandler:
         Handle /recon-analyze command.
 
         Args:
-            command_text: Command text (e.g., "workspace=XXX report_url=...")
+            command_text: Command text (e.g., "workspace=XXX file_type=XXX unique_value=XXX [output_file=...]")
             user_id: Slack user ID
             channel_id: Slack channel ID
 
@@ -54,61 +50,118 @@ class CommandHandler:
             # Parse command
             parsed = self._parse_command(command_text)
             workspace_name = parsed.get("workspace")
+            file_type_name = parsed.get("file_type")
+            unique_value = parsed.get("unique_value")
+            output_file = parsed.get("output_file")
             report_url = parsed.get("report_url")
-            report_file = parsed.get("report_file")
+            date_start = parsed.get("date_start")
+            date_end = parsed.get("date_end")
 
             if not workspace_name:
                 return self.slack_service.format_simple_message(
-                    "Error: workspace name is required. Usage: /recon-analyze workspace=WORKSPACE_NAME [report_url=URL]"
+                    "❌ Error: workspace_name is required.\n\nUsage: `workspace_name=NETBANKING_AUSF file_type=bank_payment_report unique_column_value=RrQHFDvwIQIKiH`"
                 )
 
-            # Get workspace
-            workspace_result = self.recon_client.get_workspace_by_name(workspace_name)
-            if not workspace_result["success"]:
+            if not file_type_name:
                 return self.slack_service.format_simple_message(
-                    f"Error: {workspace_result.get('error', 'Failed to find workspace')}"
+                    "❌ Error: file_type is required.\n\nUsage: `workspace_name=NETBANKING_AUSF file_type=bank_payment_report unique_column_value=RrQHFDvwIQIKiH`"
                 )
 
-            workspace_id = workspace_result.get("workspace_id")
+            if not unique_value:
+                return self.slack_service.format_simple_message(
+                    "❌ Error: unique_column_value is required.\n\nUsage: `workspace_name=NETBANKING_AUSF file_type=bank_payment_report unique_column_value=RrQHFDvwIQIKiH`"
+                )
+
+            # Get workspace - try API first, fallback to local DB
+            workspace_result = self.recon_client.get_workspace_by_name(workspace_name)
+            workspace_id = None
+            
+            if workspace_result.get("success"):
+                workspace_id = workspace_result.get("workspace_id")
+            else:
+                # Fallback to local DB if API fails
+                logger.info("API call failed, trying local DB", error=workspace_result.get("error"))
+                from src.data.local_db import get_local_db
+                local_db = get_local_db()
+                workspace_data = local_db.query_workspace_by_name(workspace_name)
+                if workspace_data:
+                    workspace_id = workspace_data.get("id")
+                    logger.info("Found workspace in local DB", workspace_id=workspace_id)
+                else:
+                    return self.slack_service.format_simple_message(
+                        f"Error: Workspace '{workspace_name}' not found in API or local database"
+                    )
+            
             if not workspace_id:
                 return self.slack_service.format_simple_message(
                     f"Error: Workspace '{workspace_name}' found but no ID available"
                 )
 
-            # Parse report if provided
-            report_data = None
-            if report_url or report_file:
-                report_result = self.report_parser.parse_report(
-                    file_path=report_file, url=report_url
+            # No date range needed for simple analysis
+            transaction_date_range = None
+
+            # Run unified analysis
+            logger.info(
+                "Running unified analysis",
+                workspace_id=workspace_id,
+                file_type_name=file_type_name,
+                unique_value=unique_value,
+            )
+
+            analysis_result = self.unified_analyzer.analyze(
+                workspace_id=workspace_id,
+                file_type_name=file_type_name,
+                output_file_path=None,
+                unique_column_value=unique_value,
+                transaction_date_range=transaction_date_range,
+            )
+
+            if not analysis_result.get("success"):
+                return self.slack_service.format_simple_message(
+                    f"Error: {analysis_result.get('error', 'Analysis failed')}"
                 )
-                if report_result["success"]:
-                    report_data = report_result.get("records", [])
 
-            # Run analyses
-            logger.info("Running analyses", workspace_id=workspace_id)
+            # Format results for Slack
+            findings = analysis_result.get("findings", [])
+            scenarios_detected = analysis_result.get("scenarios_detected", [])
 
-            # Scenario A: recon_at not updated
-            scenario_a = self.recon_status_analyzer.analyze_recon_at_missing(
-                workspace_id=workspace_id
-            )
+            if not findings:
+                return self.slack_service.format_simple_message(
+                    f"✅ *Analysis Complete*\n\n"
+                    f"Workspace: `{workspace_name}`\n"
+                    f"File Type: `{file_type_name}`\n"
+                    f"Unique Value: `{unique_value}`\n\n"
+                    f"*Result:* No issues found. The record does not match any of the three analysis scenarios:\n"
+                    f"• Scenario A: Reconciled but recon_at not updated\n"
+                    f"• Scenario B: MIS data present but no matching internal data\n"
+                    f"• Scenario C: Both datasets present but rules not matching\n\n"
+                    f"All scenarios are working correctly for this record."
+                )
 
-            # Scenario B: Missing internal data
-            scenario_b = self.gap_analyzer.analyze_missing_internal_data(
-                workspace_id=workspace_id
-            )
-
-            # Scenario C: Rule matching failures
-            scenario_c = self.rule_analyzer.analyze_rule_failures(
-                workspace_id=workspace_id, unreconciled_records=None
-            )
+            # Format findings by scenario
+            scenario_a_findings = [f for f in findings if f.get("scenario") == "A"]
+            scenario_b_findings = [f for f in findings if f.get("scenario") == "B"]
+            scenario_c_findings = [f for f in findings if f.get("scenario") == "C"]
 
             # Format results
             analysis_results = {
                 "workspace_name": workspace_name,
                 "workspace_id": workspace_id,
-                "scenario_a": scenario_a,
-                "scenario_b": scenario_b,
-                "scenario_c": scenario_c,
+                "file_type_name": file_type_name,
+                "unique_column_value": unique_value,
+                "scenarios_detected": scenarios_detected,
+                "scenario_a": {
+                    "findings": scenario_a_findings,
+                    "count": len(scenario_a_findings),
+                } if scenario_a_findings else None,
+                "scenario_b": {
+                    "findings": scenario_b_findings,
+                    "count": len(scenario_b_findings),
+                } if scenario_b_findings else None,
+                "scenario_c": {
+                    "findings": scenario_c_findings,
+                    "count": len(scenario_c_findings),
+                } if scenario_c_findings else None,
                 "timestamp": datetime.now().isoformat(),
             }
 
@@ -132,6 +185,7 @@ class CommandHandler:
     def _parse_command(self, command_text: str) -> Dict[str, Any]:
         """
         Parse command text into parameters.
+        Supports format: workspace_name=XXX file_type=XXX unique_column_value=XXX
 
         Args:
             command_text: Command text
@@ -141,20 +195,20 @@ class CommandHandler:
         """
         parsed = {}
 
-        # Parse workspace=XXX
-        workspace_match = re.search(r"workspace=(\S+)", command_text)
+        # Parse workspace_name=XXX or workspace=XXX
+        workspace_match = re.search(r"workspace_name=(\S+)|workspace=(\S+)", command_text)
         if workspace_match:
-            parsed["workspace"] = workspace_match.group(1)
+            parsed["workspace"] = workspace_match.group(1) or workspace_match.group(2)
 
-        # Parse report_url=XXX
-        report_url_match = re.search(r"report_url=(\S+)", command_text)
-        if report_url_match:
-            parsed["report_url"] = report_url_match.group(1)
+        # Parse file_type=XXX
+        file_type_match = re.search(r"file_type\s*=\s*(\S+)", command_text)
+        if file_type_match:
+            parsed["file_type"] = file_type_match.group(1)
 
-        # Parse report_file=XXX (for file attachments)
-        report_file_match = re.search(r"report_file=(\S+)", command_text)
-        if report_file_match:
-            parsed["report_file"] = report_file_match.group(1)
+        # Parse unique_column_value=XXX or unique_value=XXX
+        unique_value_match = re.search(r"unique_column_value\s*=\s*(\S+)|unique_value\s*=\s*(\S+)", command_text)
+        if unique_value_match:
+            parsed["unique_value"] = unique_value_match.group(1) or unique_value_match.group(2)
 
         return parsed
 
@@ -168,15 +222,22 @@ class CommandHandler:
         try:
             logger.info("Handling /recon-list-workspaces command")
 
-            # Get all workspaces
+            # Get all workspaces - try API first, fallback to local DB
             result = self.recon_client.list_all_workspaces()
+            workspaces = []
 
-            if not result["success"]:
-                return self.slack_service.format_simple_message(
-                    f"Error: {result.get('error', 'Failed to fetch workspaces')}"
-                )
-
-            workspaces = result.get("workspaces", [])
+            if result.get("success"):
+                workspaces = result.get("workspaces", [])
+            else:
+                # Fallback to local DB if API fails
+                logger.info("API call failed, trying local DB", error=result.get("error"))
+                from src.data.local_db import get_local_db
+                local_db = get_local_db()
+                cursor = local_db.conn.cursor()
+                cursor.execute("SELECT id, name, merchant_id FROM workspaces WHERE deleted_at IS NULL")
+                rows = cursor.fetchall()
+                workspaces = [{"id": row[0], "name": row[1], "merchant_id": row[2]} for row in rows]
+                logger.info("Found workspaces in local DB", count=len(workspaces))
 
             if not workspaces:
                 return self.slack_service.format_simple_message(
@@ -197,8 +258,10 @@ class CommandHandler:
             if len(workspaces) > 20:
                 message += f"\n\n_... and {len(workspaces) - 20} more_"
 
-            message += "\n\n💡 *Usage:* `/recon-analyze workspace=WORKSPACE_NAME`"
-            message += f"\n   Example: `/recon-analyze workspace={workspaces[0].get('name', 'WORKSPACE_NAME')}`"
+            message += "\n\n💡 *Usage:* `/recon-analyze workspace=WORKSPACE_NAME file_type=FILE_TYPE unique_value=VALUE`"
+            if workspaces:
+                example_ws = workspaces[0].get('name', 'WORKSPACE_NAME')
+                message += f"\n   Example: `/recon-analyze workspace={example_ws} file_type=bank_payment_report unique_value=PAYMENT_ID`"
 
             return self.slack_service.format_simple_message(message)
 
@@ -208,7 +271,8 @@ class CommandHandler:
 
     def handle_mention(self, message_text: str, user_id: str, channel_id: str) -> Dict[str, Any]:
         """
-        Handle app mention with natural language processing.
+        Handle app mention - simple command format.
+        Format: workspace_name=XXX file_type=XXX unique_column_value=XXX
         
         Args:
             message_text: The message text (with @bot mention removed)
@@ -219,77 +283,44 @@ class CommandHandler:
             Dict containing Slack response
         """
         try:
-            # Remove bot mention and clean up text
-            cleaned_text = message_text.strip().lower()
-            
             logger.info(
                 "Handling app mention",
-                message=cleaned_text,
+                message=message_text,
                 user_id=user_id,
                 channel_id=channel_id,
             )
             
-            # Intent detection using keywords
-            if any(keyword in cleaned_text for keyword in [
-                "list", "show", "what", "available", "all", "workspaces", "workspace"
-            ]) and any(keyword in cleaned_text for keyword in ["workspace", "workspaces"]):
-                # List workspaces intent
-                return self.handle_list_workspaces()
+            # Parse the command text directly
+            parsed = self._parse_command(message_text)
             
-            elif any(keyword in cleaned_text for keyword in [
-                "analyze", "analysis", "check", "run", "recon"
-            ]):
-                # Analyze intent - try to extract workspace name
-                workspace_name = self._extract_workspace_from_text(cleaned_text)
-                
-                if workspace_name:
-                    # Use existing analyze handler
-                    return self.handle_recon_analyze(
-                        command_text=f"workspace={workspace_name}",
-                        user_id=user_id,
-                        channel_id=channel_id,
-                    )
-                else:
-                    return self.slack_service.format_simple_message(
-                        "I can help you analyze a workspace! Please specify which workspace to analyze.\n\n"
-                        "Examples:\n"
-                        "• `analyze workspace XYZ`\n"
-                        "• `check recon for workspace ABC`\n"
-                        "• `run analysis on workspace TEST`\n\n"
-                        "Or use `/recon-list-workspaces` to see all available workspaces."
-                    )
+            logger.info(
+                "Parsed command",
+                parsed=parsed,
+                has_workspace=bool(parsed.get("workspace")),
+                has_file_type=bool(parsed.get("file_type")),
+                has_unique_value=bool(parsed.get("unique_value")),
+            )
             
-            elif any(keyword in cleaned_text for keyword in [
-                "hello", "hi", "hey", "help", "what can you do"
-            ]):
-                # Greeting/help intent
-                return self.slack_service.format_simple_message(
-                    "👋 Hi! I'm the Recon Analysis Bot. I can help you:\n\n"
-                    "📋 *List Workspaces:*\n"
-                    "   • `@Recon Analysis Bot list workspaces`\n"
-                    "   • `@Recon Analysis Bot show all workspaces`\n"
-                    "   • `/recon-list-workspaces`\n\n"
-                    "🔍 *Analyze Workspace:*\n"
-                    "   • `@Recon Analysis Bot analyze workspace XYZ`\n"
-                    "   • `@Recon Analysis Bot check recon for workspace ABC`\n"
-                    "   • `/recon-analyze workspace=XYZ`\n\n"
-                    "💡 Just mention me and ask naturally, or use slash commands!"
+            # If we have the required parameters, run analysis
+            if parsed.get("workspace") and parsed.get("file_type") and parsed.get("unique_value"):
+                logger.info("All parameters found, running analysis")
+                return self.handle_recon_analyze(
+                    command_text=message_text,
+                    user_id=user_id,
+                    channel_id=channel_id,
                 )
             
-            else:
-                # Unknown intent - provide helpful response
-                return self.slack_service.format_simple_message(
-                    "I can help you with reconciliation analysis! Here's what I can do:\n\n"
-                    "• *List workspaces:* `@Recon Analysis Bot list workspaces`\n"
-                    "• *Analyze workspace:* `@Recon Analysis Bot analyze workspace NAME`\n"
-                    "• *Get help:* `@Recon Analysis Bot help`\n\n"
-                    "Or use slash commands:\n"
-                    "• `/recon-list-workspaces` - List all workspaces\n"
-                    "• `/recon-analyze workspace=NAME` - Analyze a workspace"
-                )
+            # Otherwise show help
+            logger.info("Missing parameters, showing help message")
+            return self.slack_service.format_simple_message(
+                "👋 *Recon Analysis Bot*\n\n"
+                "Usage: `workspace_name=NETBANKING_AUSF file_type=bank_payment_report unique_column_value=RrQHFDvwIQIKiH`\n\n"
+                "Example:\n"
+                "`@Recon Analysis Bot workspace_name=NETBANKING_AUSF file_type=bank_payment_report unique_column_value=RrQHFDvwIQIKiH`"
+            )
                 
         except Exception as e:
-            logger.error("Error handling mention", error=str(e))
+            logger.error("Error handling mention", error=str(e), exc_info=True)
             return self.slack_service.format_simple_message(f"Error: {str(e)}")
 
     def _extract_workspace_from_text(self, text: str) -> Optional[str]:

@@ -51,3 +51,8 @@ model = "llama2"
 # Available models: llama2, llama3, mistral, codellama, phi, etc.
 # Run 'ollama list' to see available models
 
+[local_db]
+enabled = false
+db_path = "local_db.sqlite"
+# Set enabled = true to use local SQLite database instead of Trino
+
