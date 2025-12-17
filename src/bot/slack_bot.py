@@ -14,78 +14,108 @@ from src.utils.logging import logger
 # Initialize Flask app
 flask_app = Flask(__name__)
 
-# Initialize Slack app
+# Initialize Slack app (lazy initialization to avoid token validation on import)
 slack_signing_secret = get_config_value("slack.signing_secret", "")
 slack_bot_token = get_config_value("slack.bot_token", "")
 
-if not slack_signing_secret or not slack_bot_token:
+slack_app = None
+if slack_signing_secret and slack_bot_token:
+    try:
+        slack_app = App(
+            token=slack_bot_token,
+            signing_secret=slack_signing_secret,
+        )
+    except Exception as e:
+        logger.warning(f"Failed to initialize Slack app (will retry on first request): {e}")
+        slack_app = None
+else:
     logger.warning("Slack credentials not configured. Bot will not function properly.")
-
-slack_app = App(
-    token=slack_bot_token,
-    signing_secret=slack_signing_secret,
-)
 
 # Initialize command handler
 command_handler = CommandHandler()
 
-# Initialize Slack request handler
-handler = SlackRequestHandler(slack_app)
+
+def _get_slack_app():
+    """Get or initialize Slack app."""
+    global slack_app
+    if slack_app is None:
+        slack_signing_secret = get_config_value("slack.signing_secret", "")
+        slack_bot_token = get_config_value("slack.bot_token", "")
+        if slack_signing_secret and slack_bot_token:
+            try:
+                slack_app = App(
+                    token=slack_bot_token,
+                    signing_secret=slack_signing_secret,
+                )
+                # Register handlers
+                _register_slack_handlers(slack_app)
+            except Exception as e:
+                logger.warning(f"Failed to initialize Slack app: {e}")
+                slack_app = None
+        else:
+            logger.warning("Slack credentials not configured")
+    return slack_app
 
 
-@slack_app.command("/recon-analyze")
-def handle_recon_analyze_command(ack, body, respond):
-    """
-    Handle /recon-analyze slash command.
-    """
-    try:
-        # Acknowledge command immediately
-        ack()
+def _register_slack_handlers(app):
+    """Register Slack event handlers."""
+    @app.command("/recon-analyze")
+    def handle_recon_analyze_command(ack, body, respond):
+        """
+        Handle /recon-analyze slash command.
+        """
+        try:
+            # Acknowledge command immediately
+            ack()
 
-        # Get command details
-        command_text = body.get("text", "")
-        user_id = body.get("user_id", "")
-        channel_id = body.get("channel_id", "")
+            # Get command details
+            command_text = body.get("text", "")
+            user_id = body.get("user_id", "")
+            channel_id = body.get("channel_id", "")
 
-        logger.info(
-            "Received /recon-analyze command",
-            command_text=command_text,
-            user_id=user_id,
-            channel_id=channel_id,
-        )
+            logger.info(
+                "Received /recon-analyze command",
+                command_text=command_text,
+                user_id=user_id,
+                channel_id=channel_id,
+            )
 
-        # Handle command
-        response = command_handler.handle_recon_analyze(
-            command_text=command_text, user_id=user_id, channel_id=channel_id
-        )
+            # Handle command
+            response = command_handler.handle_recon_analyze(
+                command_text=command_text, user_id=user_id, channel_id=channel_id
+            )
 
-        # Send response
-        respond(response)
+            # Send response
+            respond(response)
 
-    except Exception as e:
-        logger.error("Error handling /recon-analyze command", error=str(e))
-        respond({
-            "response_type": "ephemeral",
-            "text": f"Error: {str(e)}",
-        })
+        except Exception as e:
+            logger.error("Error handling /recon-analyze command", error=str(e))
+            respond({
+                "response_type": "ephemeral",
+                "text": f"Error: {str(e)}",
+            })
+
+    @app.event("app_mention")
+    def handle_app_mentions(event, say):
+        """
+        Handle app mention events.
+        """
+        try:
+            text = event.get("text", "")
+            user = event.get("user", "")
+
+            logger.info("Received app mention", text=text, user=user)
+
+            # Simple response for mentions
+            say(f"Hi <@{user}>! Use `/recon-analyze workspace=WORKSPACE_NAME` to analyze reconciliation data.")
+
+        except Exception as e:
+            logger.error("Error handling app mention", error=str(e))
 
 
-@slack_app.event("app_mention")
-def handle_app_mentions(event, say):
-    """
-    Handle app mention events.
-    """
-    try:
-        text = event.get("text", "")
-        user = event.get("user", "")
-
-        logger.info("Received app mention", text=text, user=user)
-
-        # Simple response for mentions
-        say(f"Hi <@{user}>! Use `/recon-analyze workspace=WORKSPACE_NAME` to analyze reconciliation data.")
-
-    except Exception as e:
-        logger.error("Error handling app mention", error=str(e))
+# Register handlers if Slack app is initialized
+if slack_app:
+    _register_slack_handlers(slack_app)
 
 
 @flask_app.route("/slack/events", methods=["POST"])
@@ -93,7 +123,13 @@ def slack_events():
     """
     Handle Slack events endpoint.
     """
-    return handler.handle(request)
+    try:
+        app = _get_slack_app()
+        handler = SlackRequestHandler(app)
+        return handler.handle(request)
+    except Exception as e:
+        logger.error(f"Error handling Slack events: {e}")
+        return jsonify({"error": "Slack app not initialized"}), 500
 
 
 @flask_app.route("/health", methods=["GET"])

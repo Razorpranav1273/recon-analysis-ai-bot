@@ -54,7 +54,8 @@ log_level_mapping = {
 log_level = log_level_mapping.get(log_level_str, logging.INFO)
 
 # Resolve file logging destination
-LOG_DIR = os.environ.get("LOG_DIR", "/var/log/fluentd")
+# Use local logs directory for development, /var/log/fluentd for production
+LOG_DIR = os.environ.get("LOG_DIR", os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "logs"))
 SERVICE_NAME = os.environ.get("SERVICE_NAME", "recon-analysis-bot")
 LOG_FILE_PATH = os.path.join(
     LOG_DIR, f"{SERVICE_NAME}.{generate_random_string()}.log"
