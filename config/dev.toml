@@ -27,7 +27,7 @@ max_tokens = 2000
 [ollama]
 enabled = true
 base_url = "http://localhost:11434"
-model = "llama2"
+model = "mistral"
 
 [local_db]
 enabled = true

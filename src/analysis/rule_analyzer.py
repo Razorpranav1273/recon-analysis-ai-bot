@@ -659,4 +659,3 @@ class RuleAnalyzer:
                 formatted[key] = value
         
         return json.dumps(formatted, indent=2, default=str)
-
